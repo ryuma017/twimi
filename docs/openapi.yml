@@ -15,7 +15,11 @@ paths:
       responses:
         '200':
           description: OK
-          headers: {}
+          headers:
+            Location:
+              schema:
+                type: string
+              description: /tweets
           content:
             application/json:
               schema:
@@ -42,11 +46,6 @@ paths:
                     type: boolean
         '400':
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
         '401':
           description: Unauthorized
       requestBody:
