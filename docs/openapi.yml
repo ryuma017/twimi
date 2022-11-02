@@ -115,7 +115,7 @@ paths:
             Location:
               schema:
                 type: string
-              description: redirect to `/login`
+              description: redirect to `/login` if unauthorized
       operationId: get-tweets
       requestBody:
         content:
@@ -134,6 +134,26 @@ paths:
       summary: ''
       operationId: post-tweets
       responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tweet_id:
+                    type: integer
+                  user_id:
+                    type: integer
+                  content:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
         '303':
           description: See Other
           headers:
@@ -141,6 +161,8 @@ paths:
               schema:
                 type: string
               description: redirect to `/login` if unauthorized
+        '400':
+          description: Bad Request
       parameters:
         - schema:
             type: string
@@ -152,8 +174,6 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: string
                 content:
                   type: string
 components:
