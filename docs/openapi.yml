@@ -1,0 +1,76 @@
+openapi: 3.0.0
+x-stoplight:
+  id: nyqjerzplm2ns
+info:
+  title: Twimi
+  version: '1.0'
+  description: Twimi api
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /login:
+    post:
+      summary: ''
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    access_token: token
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user_id:
+                    type: integer
+                  username:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+                  image_url:
+                    type: string
+                  is_official:
+                    type: boolean
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  email: user@example.com
+                  password: password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters: []
+components:
+  schemas: {}
