@@ -129,5 +129,32 @@ paths:
             type: string
           in: header
           name: Authorized
+      description: '  '
+    post:
+      summary: ''
+      operationId: post-tweets
+      responses:
+        '303':
+          description: See Other
+          headers:
+            Location:
+              schema:
+                type: string
+              description: redirect to `/login` if unauthorized
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                content:
+                  type: string
 components:
   schemas: {}
