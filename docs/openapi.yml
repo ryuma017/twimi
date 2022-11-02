@@ -38,10 +38,13 @@ paths:
                     type: string
                   created_at:
                     type: string
+                    format: date-time
                   updated_at:
                     type: string
+                    format: date-time
                   image_url:
                     type: string
+                    format: uri
                   is_official:
                     type: boolean
         '400':
@@ -71,5 +74,60 @@ paths:
               properties: {}
         description: ''
       parameters: []
+  /tweets:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tweet_id:
+                      type: integer
+                    user_id:
+                      type: integer
+                    content:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+              examples:
+                example-1:
+                  value:
+                    - tweet_id: 0
+                      user_id: 0
+                      content: string
+                      created_at: '2019-08-24T14:15:22Z'
+                      updated_at: '2019-08-24T14:15:22Z'
+        '303':
+          description: See Other
+          headers:
+            Location:
+              schema:
+                type: string
+              description: redirect to `/login`
+      operationId: get-tweets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorized
 components:
   schemas: {}
