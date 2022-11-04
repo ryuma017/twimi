@@ -270,7 +270,7 @@ paths:
       operationId: get-user
       parameters: []
       security:
-        - Authorization: []
+        - BearerAuthn: []
     patch:
       summary: Update the authenticated user
       operationId: patch-user
@@ -295,7 +295,7 @@ paths:
                 username:
                   type: string
       security:
-        - Authorization: []
+        - BearerAuthn: []
   /user/tweets:
     get:
       summary: List tweets the authenticated user creates
@@ -313,7 +313,7 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
       parameters: []
       security:
-        - Authorization: []
+        - BearerAuthn: []
     post:
       summary: Create a tweet for the authenticated user
       operationId: post-user-tweets
@@ -337,7 +337,7 @@ paths:
                 content:
                   type: string
       security:
-        - Authorization: []
+        - BearerAuthn: []
   '/user/tweets/{tweet_id}':
     parameters:
       - schema:
@@ -361,7 +361,7 @@ paths:
         '404':
           description: The tweet was not found
       security:
-        - Authorization: []
+        - BearerAuthn: []
   /user/following:
     get:
       summary: List the users the authenticated user follows
@@ -379,7 +379,7 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-following
       security:
-        - Authorization: []
+        - BearerAuthn: []
   '/user/following/{username}':
     parameters:
       - schema:
@@ -398,7 +398,7 @@ paths:
         '404':
           description: The user was not found
       security:
-        - Authorization: []
+        - BearerAuthn: []
     delete:
       summary: Unfollow a user
       operationId: delete-user-following-username
@@ -410,7 +410,7 @@ paths:
         '404':
           description: The user was not found
       security:
-        - Authorization: []
+        - BearerAuthn: []
   /user/followers:
     get:
       summary: List followers of the authenticated user
@@ -428,7 +428,7 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-followers
       security:
-        - Authorization: []
+        - BearerAuthn: []
   /user/likes:
     get:
       summary: List "likes" the authenticated user likes
@@ -446,7 +446,7 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-likes
       security:
-        - Authorization: []
+        - BearerAuthn: []
   '/user/likes/{tweet_id}':
     parameters:
       - schema:
@@ -465,7 +465,7 @@ paths:
         '404':
           description: The tweet was not found
       security:
-        - Authorization: []
+        - BearerAuthn: []
     delete:
       summary: Unlike a tweet
       operationId: delete-user-likes-tweet_id
@@ -477,7 +477,7 @@ paths:
         '404':
           description: The tweet was not found
       security:
-        - Authorization: []
+        - BearerAuthn: []
 components:
   schemas:
     User:
@@ -541,8 +541,7 @@ components:
           description: Bearer realm="jwtssoprotectedrealm"
   parameters: {}
   securitySchemes:
-    Authorization:
-      type: apiKey
-      in: header
-      name: Bearer <TOKEN>
-      description: For authenticated users
+    BearerAuthn:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
