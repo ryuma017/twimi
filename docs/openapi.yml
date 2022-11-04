@@ -13,6 +13,8 @@ paths:
   /signup:
     post:
       summary: Create a user
+      tags:
+        - users
       operationId: post-signup
       responses:
         '201':
@@ -45,6 +47,8 @@ paths:
   /login:
     post:
       summary: Login
+      tags:
+        - users
       operationId: post-login
       responses:
         '200':
@@ -75,6 +79,8 @@ paths:
   /logout:
     post:
       summary: Logout
+      tags:
+        - users
       operationId: post-logout
       responses:
         '204':
@@ -84,6 +90,8 @@ paths:
   /users:
     get:
       summary: List users
+      tags:
+        - users
       operationId: get-users
       responses:
         '200':
@@ -103,6 +111,8 @@ paths:
         required: true
     get:
       summary: Get a user
+      tags:
+        - users
       operationId: get-users-username
       responses:
         '200':
@@ -122,7 +132,9 @@ paths:
         required: true
     get:
       summary: List users a user follows
-      tags: []
+      tags:
+        - users
+        - follows
       responses:
         '200':
           description: OK
@@ -144,7 +156,9 @@ paths:
         required: true
     get:
       summary: List followers of a user
-      tags: []
+      tags:
+        - users
+        - follows
       responses:
         '200':
           description: OK
@@ -166,7 +180,8 @@ paths:
         required: true
     get:
       summary: List tweets a user creates
-      tags: []
+      tags:
+        - tweets
       responses:
         '200':
           description: OK
@@ -188,7 +203,8 @@ paths:
         required: true
     get:
       summary: List "likes" a user likes
-      tags: []
+      tags:
+        - likes
       responses:
         '200':
           description: OK
@@ -204,6 +220,8 @@ paths:
   /tweets:
     get:
       summary: List tweets
+      tags:
+        - tweets
       operationId: get-tweets
       responses:
         '200':
@@ -223,6 +241,8 @@ paths:
         required: true
     get:
       summary: Get a tweet
+      tags:
+        - tweets
       operationId: get-tweets-tweet_id
       responses:
         '200':
@@ -242,6 +262,8 @@ paths:
         required: true
     get:
       summary: List "likes" of a tweet
+      tags:
+        - likes
       operationId: get-tweets-tweet_id-likes
       responses:
         '200':
@@ -257,7 +279,8 @@ paths:
   /user:
     get:
       summary: Get the authenticated user
-      tags: []
+      tags:
+        - users
       responses:
         '200':
           description: OK
@@ -273,6 +296,8 @@ paths:
         - BearerAuthn: []
     patch:
       summary: Update the authenticated user
+      tags:
+        - users
       operationId: patch-user
       responses:
         '200':
@@ -299,6 +324,8 @@ paths:
   /user/tweets:
     get:
       summary: List tweets the authenticated user creates
+      tags:
+        - tweets
       operationId: get-user-tweets
       responses:
         '200':
@@ -316,6 +343,8 @@ paths:
         - BearerAuthn: []
     post:
       summary: Create a tweet for the authenticated user
+      tags:
+        - tweets
       operationId: post-user-tweets
       responses:
         '201':
@@ -347,6 +376,8 @@ paths:
         required: true
     delete:
       summary: Delete a tweet the authenticated user creates
+      tags:
+        - tweets
       operationId: delete-user-tweets-tweet_id
       responses:
         '204':
@@ -365,7 +396,9 @@ paths:
   /user/following:
     get:
       summary: List the users the authenticated user follows
-      tags: []
+      tags:
+        - users
+        - follows
       responses:
         '200':
           description: OK
@@ -389,6 +422,8 @@ paths:
         required: true
     put:
       summary: Follow a user
+      tags:
+        - follows
       operationId: put-user-following-username
       responses:
         '204':
@@ -401,6 +436,8 @@ paths:
         - BearerAuthn: []
     delete:
       summary: Unfollow a user
+      tags:
+        - follows
       operationId: delete-user-following-username
       responses:
         '204':
@@ -414,7 +451,9 @@ paths:
   /user/followers:
     get:
       summary: List followers of the authenticated user
-      tags: []
+      tags:
+        - users
+        - follows
       responses:
         '200':
           description: OK
@@ -432,7 +471,8 @@ paths:
   /user/likes:
     get:
       summary: List "likes" the authenticated user likes
-      tags: []
+      tags:
+        - likes
       responses:
         '200':
           description: OK
@@ -456,6 +496,8 @@ paths:
         required: true
     put:
       summary: Like a tweet
+      tags:
+        - likes
       operationId: put-user-likes-tweet_id
       responses:
         '204':
@@ -468,6 +510,8 @@ paths:
         - BearerAuthn: []
     delete:
       summary: Unlike a tweet
+      tags:
+        - likes
       operationId: delete-user-likes-tweet_id
       responses:
         '204':
@@ -544,4 +588,4 @@ components:
     BearerAuthn:
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      description: ''
