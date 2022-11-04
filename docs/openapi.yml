@@ -22,14 +22,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  user_id:
-                    type: integer
-                  username:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+                  user:
+                    $ref: '#/components/schemas/user'
                   access_token:
                     type: string
         '400':
@@ -60,14 +54,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  user_id:
-                    type: integer
-                  username:
-                    type: string
-                  created_at:
-                    type: string
-                  updated_at:
-                    type: string
+                  user:
+                    $ref: '#/components/schemas/user'
                   access_token:
                     type: string
         '400':
