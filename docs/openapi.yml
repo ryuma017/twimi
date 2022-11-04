@@ -1,0 +1,600 @@
+openapi: 3.0.0
+x-stoplight:
+  id: dtbivwlwebt3g
+info:
+  title: Twimi API v2
+  version: '1.0'
+  contact:
+    name: ryuma017
+  description: REST API for Twimi
+servers:
+  - url: 'http://localhost:3000'
+tags:
+  - name: users
+    description: Interact with and view information about users and also current user.
+  - name: tweets
+    description: Interact with tweets
+  - name: follows
+    description: Interact with following
+  - name: likes
+    description: Interact with "likes"
+paths:
+  /signup:
+    post:
+      summary: Create a user
+      tags:
+        - users
+      operationId: post-signup
+      responses:
+        '201':
+          description: A user was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  access_token:
+                    type: string
+        '400':
+          description: Invalid request
+        '409':
+          description: The username or email was already taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+  /login:
+    post:
+      summary: Login
+      tags:
+        - users
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  access_token:
+                    type: string
+        '400':
+          description: Invalid request
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+  /logout:
+    post:
+      summary: Logout
+      tags:
+        - users
+      operationId: post-logout
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+  /users:
+    get:
+      summary: List users
+      tags:
+        - users
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  '/users/{username}':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: Get a user
+      tags:
+        - users
+      operationId: get-users-username
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: The user was not found
+  '/users/{username}/following':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: List users a user follows
+      tags:
+        - users
+        - follows
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: The user was not found
+      operationId: get-users-username-following
+  '/users/{username}/followers':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: List followers of a user
+      tags:
+        - users
+        - follows
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: The user was not found
+      operationId: get-users-username-followers
+  '/users/{username}/tweets':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: List tweets a user creates
+      tags:
+        - tweets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+        '404':
+          description: The user was not found
+      operationId: get-users-username-tweets
+  '/users/{username}/likes':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    get:
+      summary: List "likes" a user likes
+      tags:
+        - likes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+        '404':
+          description: The user was not found
+      operationId: get-users-username-likes
+  /tweets:
+    get:
+      summary: List tweets
+      tags:
+        - tweets
+      operationId: get-tweets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+  '/tweets/{tweet_id}':
+    parameters:
+      - schema:
+          type: string
+        name: tweet_id
+        in: path
+        required: true
+    get:
+      summary: Get a tweet
+      tags:
+        - tweets
+      operationId: get-tweets-tweet_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tweet'
+        '404':
+          description: The tweet was not found
+  '/tweets/{tweet_id}/likes':
+    parameters:
+      - schema:
+          type: string
+        name: tweet_id
+        in: path
+        required: true
+    get:
+      summary: List "likes" of a tweet
+      tags:
+        - likes
+      operationId: get-tweets-tweet_id-likes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+        '404':
+          description: The tweet was not found
+  /user:
+    get:
+      summary: Get the authenticated user
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      operationId: get-user
+      parameters: []
+      security:
+        - BearerAuthn: []
+    patch:
+      summary: Update the authenticated user
+      tags:
+        - users
+      operationId: patch-user
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      security:
+        - BearerAuthn: []
+  /user/tweets:
+    get:
+      summary: List tweets the authenticated user creates
+      tags:
+        - tweets
+      operationId: get-user-tweets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      parameters: []
+      security:
+        - BearerAuthn: []
+    post:
+      summary: Create a tweet for the authenticated user
+      tags:
+        - tweets
+      operationId: post-user-tweets
+      responses:
+        '201':
+          description: A tweet was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tweet'
+        '400':
+          description: Invalid request
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      security:
+        - BearerAuthn: []
+  '/user/tweets/{tweet_id}':
+    parameters:
+      - schema:
+          type: string
+        name: tweet_id
+        in: path
+        required: true
+    delete:
+      summary: Delete a tweet the authenticated user creates
+      tags:
+        - tweets
+      operationId: delete-user-tweets-tweet_id
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The tweet was not found
+      security:
+        - BearerAuthn: []
+  /user/following:
+    get:
+      summary: List the users the authenticated user follows
+      tags:
+        - users
+        - follows
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      operationId: get-user-following
+      security:
+        - BearerAuthn: []
+  '/user/following/{username}':
+    parameters:
+      - schema:
+          type: string
+        name: username
+        in: path
+        required: true
+    put:
+      summary: Follow a user
+      tags:
+        - follows
+      operationId: put-user-following-username
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The user was not found
+      security:
+        - BearerAuthn: []
+    delete:
+      summary: Unfollow a user
+      tags:
+        - follows
+      operationId: delete-user-following-username
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The user was not found
+      security:
+        - BearerAuthn: []
+  /user/followers:
+    get:
+      summary: List followers of the authenticated user
+      tags:
+        - users
+        - follows
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      operationId: get-user-followers
+      security:
+        - BearerAuthn: []
+  /user/likes:
+    get:
+      summary: List "likes" the authenticated user likes
+      tags:
+        - likes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+      operationId: get-user-likes
+      security:
+        - BearerAuthn: []
+  '/user/likes/{tweet_id}':
+    parameters:
+      - schema:
+          type: string
+        name: tweet_id
+        in: path
+        required: true
+    put:
+      summary: Like a tweet
+      tags:
+        - likes
+      operationId: put-user-likes-tweet_id
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The tweet was not found
+      security:
+        - BearerAuthn: []
+    delete:
+      summary: Unlike a tweet
+      tags:
+        - likes
+      operationId: delete-user-likes-tweet_id
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The tweet was not found
+      security:
+        - BearerAuthn: []
+components:
+  schemas:
+    User:
+      title: User
+      x-stoplight:
+        id: ktzcvij3j9p67
+      type: object
+      properties:
+        user_id:
+          type: integer
+        username:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Tweet:
+      title: Tweet
+      x-stoplight:
+        id: 9p7y9ow7nan2z
+      type: object
+      properties:
+        tweet_id:
+          type: integer
+        user_id:
+          type: integer
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Like:
+      title: Like
+      x-stoplight:
+        id: cxk4wbyzn9otd
+      type: object
+      properties:
+        user_id:
+          type: integer
+        tweet_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+  responses:
+    RequiresAuthentication:
+      description: Requires authentication
+      content:
+        application/json:
+          schema:
+            type: object
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+          description: Bearer realm="jwtssoprotectedrealm"
+  parameters: {}
+  securitySchemes:
+    BearerAuthn:
+      type: http
+      scheme: bearer
+      description: ''
