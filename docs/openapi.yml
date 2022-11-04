@@ -16,7 +16,7 @@ paths:
       operationId: post-signup
       responses:
         '201':
-          description: Created
+          description: A user was created
           content:
             application/json:
               schema:
@@ -27,9 +27,9 @@ paths:
                   access_token:
                     type: string
         '400':
-          description: Bad Request
+          description: Invalid request
         '409':
-          description: Conflict
+          description: The username or email was already taken
       requestBody:
         content:
           application/json:
@@ -59,9 +59,9 @@ paths:
                   access_token:
                     type: string
         '400':
-          description: Bad Request
+          description: Invalid request
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       requestBody:
         content:
           application/json:
@@ -80,7 +80,7 @@ paths:
         '204':
           description: No Content
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
   /users:
     get:
       summary: List users
@@ -112,7 +112,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '404':
-          description: Not Found
+          description: The user was not found
   '/users/{username}/following':
     parameters:
       - schema:
@@ -133,7 +133,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         '404':
-          description: Not Found
+          description: The user was not found
       operationId: get-users-username-following
   '/users/{username}/followers':
     parameters:
@@ -155,7 +155,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         '404':
-          description: Not Found
+          description: The user was not found
       operationId: get-users-username-followers
   '/users/{username}/tweets':
     parameters:
@@ -177,7 +177,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Tweet'
         '404':
-          description: Not Found
+          description: The user was not found
       operationId: get-users-username-tweets
   '/users/{username}/likes':
     parameters:
@@ -199,7 +199,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Like'
         '404':
-          description: Not Found
+          description: The user was not found
       operationId: get-users-username-likes
   /tweets:
     get:
@@ -232,7 +232,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tweet'
         '404':
-          description: Not Found
+          description: The tweet was not found
   '/tweets/{tweet_id}/likes':
     parameters:
       - schema:
@@ -253,7 +253,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Like'
         '404':
-          description: Not Found
+          description: The tweet was not found
   /user:
     get:
       summary: Get the authenticated user
@@ -266,7 +266,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user
       parameters:
         - schema:
@@ -286,9 +286,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Bad Request
+          description: Invalid request
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       requestBody:
         content:
           application/json:
@@ -311,21 +311,21 @@ paths:
                 items:
                   $ref: '#/components/schemas/Tweet'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
     post:
       summary: Create a tweet for the authenticated user
       operationId: post-user-tweets
       responses:
         '201':
-          description: Created
+          description: A tweet was created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tweet'
         '400':
-          description: Bad Request
+          description: Invalid request
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       requestBody:
         content:
           application/json:
@@ -353,9 +353,9 @@ paths:
                 type: object
                 properties: {}
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
         '404':
-          description: Not Found
+          description: The tweet was not found
   /user/following:
     get:
       summary: List the users the authenticated user follows
@@ -370,7 +370,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-following
   '/user/following/{username}':
     parameters:
@@ -386,7 +386,9 @@ paths:
         '204':
           description: No Content
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The user was not found
     delete:
       summary: Unfollow a user
       operationId: delete-user-following-username
@@ -394,9 +396,9 @@ paths:
         '204':
           description: No Content
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
         '404':
-          description: Not Found
+          description: The user was not found
   /user/followers:
     get:
       summary: List followers of the authenticated user
@@ -411,7 +413,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-followers
   /user/likes:
     get:
@@ -427,7 +429,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Like'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-likes
   '/user/likes/{tweet_id}':
     parameters:
@@ -443,7 +445,9 @@ paths:
         '204':
           description: No Content
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The tweet was not found
     delete:
       summary: Unlike a tweet
       operationId: delete-user-likes-tweet_id
@@ -451,7 +455,9 @@ paths:
         '204':
           description: No Content
         '401':
-          description: Unauthorized
+          $ref: '#/components/responses/RequiresAuthentication'
+        '404':
+          description: The tweet was not found
 components:
   schemas:
     User:
@@ -502,8 +508,8 @@ components:
           type: string
           format: date-time
   responses:
-    Unauthorized:
-      description: Example response
+    RequiresAuthentication:
+      description: Requires authentication
       content:
         application/json:
           schema:
