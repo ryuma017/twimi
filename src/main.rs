@@ -2,7 +2,7 @@ use std::{net::TcpListener, str::FromStr};
 
 use actix_web::{
     middleware::NormalizePath,
-    web::{Data, get, scope},
+    web::{get, scope, Data},
     App, HttpResponse, HttpServer,
 };
 use sqlx::{
@@ -21,7 +21,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 scope("/health_check")
                     .route("", get().to(health_check))
-                    .route("/database", get().to(health_check)),
+                    .route("/database", get().to(health_check_db)),
             )
             .route("/health_check", get().to(health_check))
             .app_data(db_pool.clone())
