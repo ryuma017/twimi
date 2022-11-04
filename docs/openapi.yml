@@ -23,7 +23,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: '#/components/schemas/User'
                   access_token:
                     type: string
         '400':
@@ -55,7 +55,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: '#/components/schemas/User'
                   access_token:
                     type: string
         '400':
@@ -93,7 +93,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/User'
   '/users/{username}':
     parameters:
       - schema:
@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: '#/components/schemas/User'
         '404':
           description: Not Found
   '/users/{username}/following':
@@ -131,7 +131,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/User'
         '404':
           description: Not Found
       operationId: get-users-username-following
@@ -153,7 +153,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/User'
         '404':
           description: Not Found
       operationId: get-users-username-followers
@@ -175,7 +175,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/tweet'
+                  $ref: '#/components/schemas/Tweet'
         '404':
           description: Not Found
       operationId: get-users-username-tweets
@@ -197,7 +197,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/like'
+                  $ref: '#/components/schemas/Like'
         '404':
           description: Not Found
       operationId: get-users-username-likes
@@ -213,7 +213,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/tweet'
+                  $ref: '#/components/schemas/Tweet'
   '/tweets/{tweet_id}':
     parameters:
       - schema:
@@ -230,7 +230,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tweet'
+                $ref: '#/components/schemas/Tweet'
         '404':
           description: Not Found
   '/tweets/{tweet_id}/likes':
@@ -251,7 +251,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/like'
+                  $ref: '#/components/schemas/Like'
         '404':
           description: Not Found
   /user:
@@ -264,7 +264,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
       operationId: get-user
@@ -284,7 +284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad Request
         '401':
@@ -309,7 +309,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/tweet'
+                  $ref: '#/components/schemas/Tweet'
         '401':
           $ref: '#/components/responses/Unauthorized'
     post:
@@ -321,7 +321,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tweet'
+                $ref: '#/components/schemas/Tweet'
         '400':
           description: Bad Request
         '401':
@@ -368,7 +368,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
       operationId: get-user-following
@@ -409,7 +409,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
+                  $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
       operationId: get-user-followers
@@ -425,7 +425,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/like'
+                  $ref: '#/components/schemas/Like'
         '401':
           $ref: '#/components/responses/Unauthorized'
       operationId: get-user-likes
@@ -454,8 +454,8 @@ paths:
           description: Unauthorized
 components:
   schemas:
-    user:
-      title: user
+    User:
+      title: User
       x-stoplight:
         id: ktzcvij3j9p67
       type: object
@@ -470,8 +470,8 @@ components:
         updated_at:
           type: string
           format: date-time
-    tweet:
-      title: tweet
+    Tweet:
+      title: Tweet
       x-stoplight:
         id: 9p7y9ow7nan2z
       type: object
@@ -488,8 +488,8 @@ components:
         updated_at:
           type: string
           format: date-time
-    like:
-      title: like
+    Like:
+      title: Like
       x-stoplight:
         id: cxk4wbyzn9otd
       type: object
