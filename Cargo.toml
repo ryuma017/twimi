@@ -8,4 +8,5 @@ rust-version = "1.65.0"
 
 [dependencies]
 actix-web = "4.2.1"
+sqlx = { version = "0.6.2", default-features = false, features = ["runtime-actix-rustls", "mysql", "macros"] }
 tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }

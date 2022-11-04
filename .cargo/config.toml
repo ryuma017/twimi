@@ -3,4 +3,4 @@ linker = "clang"
 rustflags = ["-C", "link-arg=-fuse-ld=mold"]
 
 [env]
-DATABASE_URL = "mysql://docker:password@127.0.0.1/twimi"
+DATABASE_URL = "mysql://docker:docker@127.0.0.1:3306/twimi"
