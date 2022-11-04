@@ -9,6 +9,15 @@ info:
   description: REST API for Twimi
 servers:
   - url: 'http://localhost:3000'
+tags:
+  - name: users
+    description: Interact with and view information about users and also current user.
+  - name: tweets
+    description: Interact with tweets
+  - name: follows
+    description: Interact with following
+  - name: likes
+    description: Interact with "likes"
 paths:
   /signup:
     post:
