@@ -268,12 +268,9 @@ paths:
         '401':
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearer <token>
+      parameters: []
+      security:
+        - Authorization: []
     patch:
       summary: Update the authenticated user
       operationId: patch-user
@@ -297,6 +294,8 @@ paths:
               properties:
                 username:
                   type: string
+      security:
+        - Authorization: []
   /user/tweets:
     get:
       summary: List tweets the authenticated user creates
@@ -312,6 +311,9 @@ paths:
                   $ref: '#/components/schemas/Tweet'
         '401':
           $ref: '#/components/responses/RequiresAuthentication'
+      parameters: []
+      security:
+        - Authorization: []
     post:
       summary: Create a tweet for the authenticated user
       operationId: post-user-tweets
@@ -334,6 +336,8 @@ paths:
               properties:
                 content:
                   type: string
+      security:
+        - Authorization: []
   '/user/tweets/{tweet_id}':
     parameters:
       - schema:
@@ -356,6 +360,8 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
         '404':
           description: The tweet was not found
+      security:
+        - Authorization: []
   /user/following:
     get:
       summary: List the users the authenticated user follows
@@ -372,6 +378,8 @@ paths:
         '401':
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-following
+      security:
+        - Authorization: []
   '/user/following/{username}':
     parameters:
       - schema:
@@ -389,6 +397,8 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
         '404':
           description: The user was not found
+      security:
+        - Authorization: []
     delete:
       summary: Unfollow a user
       operationId: delete-user-following-username
@@ -399,6 +409,8 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
         '404':
           description: The user was not found
+      security:
+        - Authorization: []
   /user/followers:
     get:
       summary: List followers of the authenticated user
@@ -415,6 +427,8 @@ paths:
         '401':
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-followers
+      security:
+        - Authorization: []
   /user/likes:
     get:
       summary: List "likes" the authenticated user likes
@@ -431,6 +445,8 @@ paths:
         '401':
           $ref: '#/components/responses/RequiresAuthentication'
       operationId: get-user-likes
+      security:
+        - Authorization: []
   '/user/likes/{tweet_id}':
     parameters:
       - schema:
@@ -448,6 +464,8 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
         '404':
           description: The tweet was not found
+      security:
+        - Authorization: []
     delete:
       summary: Unlike a tweet
       operationId: delete-user-likes-tweet_id
@@ -458,6 +476,8 @@ paths:
           $ref: '#/components/responses/RequiresAuthentication'
         '404':
           description: The tweet was not found
+      security:
+        - Authorization: []
 components:
   schemas:
     User:
@@ -520,3 +540,9 @@ components:
             type: string
           description: Bearer realm="jwtssoprotectedrealm"
   parameters: {}
+  securitySchemes:
+    Authorization:
+      type: apiKey
+      in: header
+      name: Bearer <TOKEN>
+      description: For authenticated users
