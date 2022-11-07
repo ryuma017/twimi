@@ -9,6 +9,6 @@ services:
       MYSQL_PASSWORD: docker
     volumes:
       - ./data/mysql:/var/lib/mysql
-      - ./data/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./data/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     ports:
       - 3306:3306
