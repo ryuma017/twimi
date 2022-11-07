@@ -9,8 +9,8 @@ use shaku::{Component, Interface};
 use sqlx::mysql::{MySqlConnectOptions, MySqlPoolOptions};
 use sqlx::MySqlPool;
 
-use crate::AppModule;
 use crate::routes::health_check;
+use crate::AppModule;
 
 pub struct ApiServer {
     port: u16,
@@ -24,7 +24,11 @@ impl ApiServer {
     {
         let listener = TcpListener::bind(address)?;
         let port = listener.local_addr()?.port();
-        let module = Arc::new(AppModule::builder().with_component_override::<dyn Database>(Box::new(MySqlDatabase::new())).build());
+        let module = Arc::new(
+            AppModule::builder()
+                .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
+                .build(),
+        );
 
         let server = HttpServer::new(move || {
             App::new()

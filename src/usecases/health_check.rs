@@ -35,5 +35,3 @@ impl HealthCheck for HealthCheckUseCase {
         }
     }
 }
-
-
