@@ -8,7 +8,7 @@ services:
       MYSQL_USER: docker
       MYSQL_PASSWORD: docker
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql:delegated
       - ./data/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     ports:
       - 3306:3306
