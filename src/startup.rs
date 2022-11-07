@@ -1,13 +1,16 @@
 use std::net::{TcpListener, ToSocketAddrs};
 use std::str::FromStr;
+use std::sync::Arc;
 
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
+use shaku::{Component, Interface};
 use sqlx::mysql::{MySqlConnectOptions, MySqlPoolOptions};
 use sqlx::MySqlPool;
 
-use crate::routes::{health_check, health_check_db};
+use crate::routes::health_check;
+use crate::AppModule;
 
 pub struct ApiServer {
     port: u16,
@@ -21,17 +24,17 @@ impl ApiServer {
     {
         let listener = TcpListener::bind(address)?;
         let port = listener.local_addr()?.port();
-        let connection_pool = {
-            let db = Database::new();
-            web::Data::new(db.pool())
-        };
+        let module = Arc::new(
+            AppModule::builder()
+                .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
+                .build(),
+        );
 
         let server = HttpServer::new(move || {
             App::new()
                 .wrap(NormalizePath::default())
                 .route("/health_check", web::get().to(health_check))
-                .route("/health_check/database", web::get().to(health_check_db))
-                .app_data(web::Data::clone(&connection_pool))
+                .app_data(Arc::clone(&module))
         })
         .listen(listener)?
         .run();
@@ -48,11 +51,17 @@ impl ApiServer {
     }
 }
 
-pub struct Database {
-    pub options: MySqlConnectOptions,
+pub trait Database: Interface {
+    fn pool(&self) -> &MySqlPool;
 }
 
-impl Database {
+#[derive(Component)]
+#[shaku(interface = Database)]
+pub struct MySqlDatabase {
+    pool: MySqlPool,
+}
+
+impl MySqlDatabase {
     pub fn new() -> Self {
         let options = MySqlConnectOptions::from_str(
             std::env::var("DATABASE_URL")
@@ -61,18 +70,22 @@ impl Database {
         )
         .unwrap();
 
-        Self { options }
-    }
-
-    pub fn pool(self) -> MySqlPool {
-        MySqlPoolOptions::new()
+        let pool = MySqlPoolOptions::new()
             .max_connections(5)
-            .connect_lazy_with(self.options)
+            .connect_lazy_with(options);
+
+        Self { pool }
     }
 }
 
-impl Default for Database {
+impl Default for MySqlDatabase {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl Database for MySqlDatabase {
+    fn pool(&self) -> &MySqlPool {
+        &self.pool
     }
 }

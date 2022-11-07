@@ -1,17 +1,13 @@
-use actix_web::{web::Data, HttpResponse};
-use sqlx::{mysql::MySqlRow, MySqlPool};
+use actix_web::HttpResponse;
+use shaku_actix::Inject;
 
-pub async fn health_check() -> HttpResponse {
-    HttpResponse::NoContent().finish()
-}
+use crate::{usecases::health_check::HealthCheck, AppModule};
 
-pub async fn health_check_db(pool: Data<MySqlPool>) -> HttpResponse {
-    select_one(&pool)
+pub async fn health_check(usecase: Inject<AppModule, dyn HealthCheck>) -> HttpResponse {
+    usecase
+        .health_check()
         .await
-        .map(|_| HttpResponse::NoContent().finish())
-        .unwrap_or_else(|_| HttpResponse::InternalServerError().finish())
-}
-
-async fn select_one(pool: &MySqlPool) -> Result<MySqlRow, sqlx::Error> {
-    sqlx::query("SELECT 1").fetch_one(pool).await
+        .map(|_| HttpResponse::NoContent())
+        .unwrap_or_else(|_| HttpResponse::ServiceUnavailable())
+        .finish()
 }
