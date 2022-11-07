@@ -6,7 +6,7 @@ use crate::helpers::spawn_app;
 async fn health_check_works() {
     let address = spawn_app().await;
     let client = reqwest::Client::new();
-    let url = Url::parse(&format!("{}/health_check", address)).expect("Failed to parse address");
+    let url = Url::parse(&format!("{}/health_check", address)).expect("Failed to parse url");
 
     let response = client
         .get(url)
@@ -22,7 +22,7 @@ async fn health_check_works() {
 async fn health_check_db_works() {
     let address = spawn_app().await;
     let client = reqwest::Client::new();
-    let url = Url::parse(&format!("{}/health_check/database", address)).expect("Failed to parse address");
+    let url = Url::parse(&format!("{}/health_check/database", address)).expect("Failed to parse url");
 
     let response = client
         .get(url)
