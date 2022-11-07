@@ -1914,6 +1914,7 @@ dependencies = [
  "shaku",
  "shaku_actix",
  "sqlx",
+ "thiserror",
  "tokio",
 ]
 

@@ -5,9 +5,10 @@ use shaku::{Component, Interface};
 
 use crate::startup::Database;
 
+#[derive(thiserror::Error, Debug)]
 pub enum HealthCheckError {
-    DatabaseError,
-    UnexpectedError,
+    #[error("Failed to acquire a connection from the pool")]
+    DatabaseError(#[source] sqlx::Error),
 }
 
 #[async_trait]
@@ -28,7 +29,7 @@ impl HealthCheck for HealthCheckUseCase {
         sqlx::query("SELECT 1")
             .fetch_one(self.database.pool())
             .await
-            .map_err(|_| HealthCheckError::DatabaseError)?;
+            .map_err(HealthCheckError::DatabaseError)?;
         Ok(())
     }
 }
