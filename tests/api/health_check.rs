@@ -1,4 +1,4 @@
-use reqwest::StatusCode;
+use reqwest::{StatusCode, Url};
 
 use crate::helpers::spawn_app;
 
@@ -6,9 +6,10 @@ use crate::helpers::spawn_app;
 async fn health_check_works() {
     let address = spawn_app().await;
     let client = reqwest::Client::new();
+    let url = Url::parse(&format!("{}/health_check", address)).expect("Failed to parse address");
 
     let response = client
-        .get(&format!("{}/health_check", address))
+        .get(url)
         .send()
         .await
         .unwrap();
@@ -21,9 +22,10 @@ async fn health_check_works() {
 async fn health_check_db_works() {
     let address = spawn_app().await;
     let client = reqwest::Client::new();
+    let url = Url::parse(&format!("{}/health_check/database", address)).expect("Failed to parse address");
 
     let response = client
-        .get(&format!("{}/health_check/database", address))
+        .get(url)
         .send()
         .await
         .unwrap();
