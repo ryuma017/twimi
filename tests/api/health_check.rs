@@ -4,12 +4,12 @@ use crate::helpers::spawn_app;
 
 #[tokio::test]
 async fn health_check_works() {
-    let address = spawn_app().await;
+    let base_url = spawn_app().await;
     let client = reqwest::Client::new();
-    let url = Url::parse(&format!("{}/health_check", address)).expect("Failed to parse url");
+    let endpoint = base_url.join("/health_check").unwrap();
 
     let response = client
-        .get(url)
+        .get(endpoint)
         .send()
         .await
         .unwrap();
@@ -20,12 +20,12 @@ async fn health_check_works() {
 
 #[tokio::test]
 async fn health_check_db_works() {
-    let address = spawn_app().await;
+    let base_url = spawn_app().await;
     let client = reqwest::Client::new();
-    let url = Url::parse(&format!("{}/health_check/database", address)).expect("Failed to parse url");
+    let endpoint = base_url.join("/health_check/database").unwrap();
 
     let response = client
-        .get(url)
+        .get(endpoint)
         .send()
         .await
         .unwrap();
