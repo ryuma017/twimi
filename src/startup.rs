@@ -36,10 +36,7 @@ impl ApiServer {
         .listen(listener)?
         .run();
 
-        Ok(Self {
-            port,
-            server,
-        })
+        Ok(Self { port, server })
     }
 
     pub async fn run(self) -> Result<(), std::io::Error> {
