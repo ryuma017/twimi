@@ -8,7 +8,7 @@ use crate::startup::Database;
 #[derive(thiserror::Error, Debug)]
 pub enum HealthCheckError {
     #[error("Failed to acquire a connection from the pool")]
-    DatabaseError(#[source] sqlx::Error),
+    DatabaseError(#[from] sqlx::Error),
 }
 
 #[async_trait]
@@ -28,8 +28,7 @@ impl HealthCheck for HealthCheckUseCase {
     async fn health_check(&self) -> Result<(), HealthCheckError> {
         sqlx::query("SELECT 1")
             .fetch_one(self.database.pool())
-            .await
-            .map_err(HealthCheckError::DatabaseError)?;
+            .await?;
         Ok(())
     }
 }
