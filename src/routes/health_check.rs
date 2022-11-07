@@ -1,6 +1,5 @@
-use actix_web::{web::Data, HttpResponse};
+use actix_web::HttpResponse;
 use shaku_actix::Inject;
-use sqlx::{mysql::MySqlRow, MySqlPool};
 
 use crate::{AppModule, usecases::health_check::HealthCheck};
 

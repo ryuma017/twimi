@@ -1,4 +1,4 @@
-use reqwest::{StatusCode, Url};
+use reqwest::StatusCode;
 
 use crate::helpers::spawn_app;
 
