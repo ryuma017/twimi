@@ -25,13 +25,10 @@ pub struct HealthCheckUseCase {
 #[async_trait]
 impl HealthCheck for HealthCheckUseCase {
     async fn health_check(&self) -> Result<(), HealthCheckError> {
-        let result = sqlx::query("SELECT 1")
+        sqlx::query("SELECT 1")
             .fetch_one(self.database.pool())
-            .await;
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(_) => Err(HealthCheckError::DatabaseError),
-        }
+            .await
+            .map_err(|_| HealthCheckError::DatabaseError)?;
+        Ok(())
     }
 }
