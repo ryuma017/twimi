@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: twimi
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+    volumes:
+      - ./data/mysql:/var/lib/mysql:delegated
+      - ./data/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    ports:
+      - 3306:3306
