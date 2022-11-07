@@ -3,11 +3,7 @@ use shaku_actix::Inject;
 
 use crate::{usecases::health_check::HealthCheck, AppModule};
 
-pub async fn health_check() -> HttpResponse {
-    HttpResponse::NoContent().finish()
-}
-
-pub async fn health_check_db(usecase: Inject<AppModule, dyn HealthCheck>) -> HttpResponse {
+pub async fn health_check(usecase: Inject<AppModule, dyn HealthCheck>) -> HttpResponse {
     usecase
         .health_check()
         .await
