@@ -1,9 +1,9 @@
-use twimi::startup::ApiServer;
+use twimi::startup::{parse_config_file, ApiServer};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    // TODO: toml とかの config ファイルから設定を読み込むようにしたい
-    let server = ApiServer::build(("127.0.0.1", 8080))?;
+    let settings = parse_config_file().expect("Failed to parse settings");
+    let server = ApiServer::build(settings)?;
     server.run().await?;
 
     Ok(())

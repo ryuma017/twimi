@@ -1,7 +1,7 @@
-use std::net::{TcpListener, ToSocketAddrs};
 use std::str::FromStr;
 use std::sync::Arc;
 
+use actix_settings::{ApplySettings as _, AtError, Settings};
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
@@ -18,12 +18,8 @@ pub struct ApiServer {
 }
 
 impl ApiServer {
-    pub fn build<A>(address: A) -> Result<Self, std::io::Error>
-    where
-        A: ToSocketAddrs,
-    {
-        let listener = TcpListener::bind(address)?;
-        let port = listener.local_addr()?.port();
+    pub fn build(settings: Settings) -> Result<Self, std::io::Error> {
+        let port = settings.actix.hosts[0].port;
         let module = Arc::new(
             AppModule::builder()
                 .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
@@ -36,7 +32,7 @@ impl ApiServer {
                 .route("/health_check", web::get().to(health_check))
                 .app_data(Arc::clone(&module))
         })
-        .listen(listener)?
+        .apply_settings(&settings)
         .run();
 
         Ok(Self { port, server })
@@ -49,6 +45,10 @@ impl ApiServer {
     pub fn port(&self) -> u16 {
         self.port
     }
+}
+
+pub fn parse_config_file() -> Result<Settings, AtError> {
+    Settings::parse_toml("config/config.toml")
 }
 
 pub trait Database: Interface {

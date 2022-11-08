@@ -1,0 +1,33 @@
+[actix]
+hosts = [
+    ["0.0.0.0", 8080]
+]
+
+mode = "development"
+
+enable-compression = false
+
+enable-log = true
+
+num-workers = "default"
+
+backlog = "default"
+
+max-connections = "default"
+
+max-connection-rate = "default"
+
+keep-alive = "default"
+
+client-timeout = "default"
+
+client-shutdown = "default"
+
+shutdown-timeout = "default"
+
+[actix.tls]
+enabled = false
+certificate = ""
+private-key = ""
+
+[application]
