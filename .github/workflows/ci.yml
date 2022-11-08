@@ -1,7 +1,6 @@
 name: CI
 
-on:
-  push: [push, pull_request]
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
@@ -63,7 +62,7 @@ jobs:
             --features=rustls,mysql
             --no-default-features
             --locked
-      - name: Migrate database
+      - name: Create & Migrate database
         run: |
           ./scripts/init_mysql.sh
       - name: Check if sqlx-data.json is up-to-date
