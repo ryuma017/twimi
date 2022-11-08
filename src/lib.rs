@@ -1,6 +1,7 @@
 pub mod routes;
 pub mod startup;
 pub mod usecases;
+pub mod domain;
 
 use shaku::module;
 use startup::MySqlDatabase;
