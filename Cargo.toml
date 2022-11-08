@@ -11,7 +11,7 @@ actix-web = "4.2.1"
 async-trait = "0.1.58"
 shaku = "0.6.1"
 shaku_actix = "0.2.0"
-sqlx = { version = "0.6.2", default-features = false, features = ["runtime-actix-rustls", "mysql", "macros"] }
+sqlx = { version = "0.6.2", default-features = false, features = ["runtime-actix-rustls", "mysql", "macros", "offline"] }
 thiserror = "1.0.37"
 tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }
 
