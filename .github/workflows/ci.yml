@@ -20,6 +20,8 @@ jobs:
           MYSQL_PASSWORD: docker
         ports:
           - 3306:3306
+    env:
+      SKIP_DOCKER_COMPOSE: true
 
     steps:
       - name: Checkout repository
@@ -63,11 +65,9 @@ jobs:
             --no-default-features
             --locked
       - name: Create & Migrate database
-        run: |
-          ./scripts/init_mysql.sh
+        run: ./scripts/init_mysql.sh
       - name: Check if sqlx-data.json is up-to-date
-        run: |
-          cargo sqlx prepare --check -- --bin twimi
+        run: cargo sqlx prepare --check -- --bin twimi
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
