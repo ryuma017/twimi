@@ -1,11 +1,11 @@
+pub mod domain;
 pub mod routes;
 pub mod startup;
 pub mod usecases;
-pub mod domain;
 
 use shaku::module;
 use startup::MySqlDatabase;
-use usecases::{signup::SignUpUseCase, health_check::HealthCheckUseCase};
+use usecases::{health_check::HealthCheckUseCase, signup::SignUpUseCase};
 
 module! {
     pub AppModule {
