@@ -7,7 +7,7 @@ DB_HOST="${MYSQL_HOST:=127.0.0.1}"
 DB_PORT="${MYSQL_TCP_PORT:=3306}"
 DB_NAME="${MYSQL_DATABASE:=twimi}"
 
-if [ -x "$(command -v docker)" ]; then
+if [ -z "${SKIP_DOCKER_COMPOSE}" ]; then
     docker compose up -d
 fi
 
