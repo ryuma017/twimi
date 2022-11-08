@@ -1,9 +1,9 @@
 use actix_web::HttpResponse;
-use shaku_actix::Inject;
 
-use crate::{usecases::health_check::HealthCheck, AppModule};
+use super::Inject;
+use crate::usecases::health_check::HealthCheck;
 
-pub async fn health_check(usecase: Inject<AppModule, dyn HealthCheck>) -> HttpResponse {
+pub async fn health_check(usecase: Inject<dyn HealthCheck>) -> HttpResponse {
     usecase
         .health_check()
         .await

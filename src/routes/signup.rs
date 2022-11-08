@@ -1,9 +1,9 @@
 use actix_web::HttpResponse;
-use shaku_actix::Inject;
 
-use crate::{usecases::signup::SignUp, AppModule};
+use super::Inject;
+use crate::usecases::signup::SignUp;
 
-pub async fn signup(usecase: Inject<AppModule, dyn SignUp>) -> HttpResponse {
+pub async fn signup(usecase: Inject<dyn SignUp>) -> HttpResponse {
     usecase
         .signup()
         .await
