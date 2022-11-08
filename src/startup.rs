@@ -19,7 +19,8 @@ pub struct ApiServer {
 
 impl ApiServer {
     pub fn build() -> Result<Self, std::io::Error> {
-        let settings = Settings::parse_toml("config/config.toml").expect("Failed to parse settings from toml file.");
+        let settings = Settings::parse_toml("config/config.toml")
+            .expect("Failed to parse settings from toml file.");
         let port = settings.actix.hosts[0].port;
         let module = Arc::new(
             AppModule::builder()
