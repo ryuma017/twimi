@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use actix_settings::{ApplySettings as _, AtError, Settings};
+use actix_settings::{ApplySettings as _, Settings};
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
@@ -18,7 +18,8 @@ pub struct ApiServer {
 }
 
 impl ApiServer {
-    pub fn build(settings: Settings) -> Result<Self, std::io::Error> {
+    pub fn build() -> Result<Self, std::io::Error> {
+        let settings = Settings::parse_toml("config/config.toml").expect("Failed to parse settings from toml file.");
         let port = settings.actix.hosts[0].port;
         let module = Arc::new(
             AppModule::builder()
@@ -45,10 +46,6 @@ impl ApiServer {
     pub fn port(&self) -> u16 {
         self.port
     }
-}
-
-pub fn parse_config_file() -> Result<Settings, AtError> {
-    Settings::parse_toml("config/config.toml")
 }
 
 pub trait Database: Interface {
