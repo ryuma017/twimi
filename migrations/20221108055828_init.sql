@@ -13,7 +13,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 DROP TABLE IF EXISTS `kaiin` ;
 
 CREATE TABLE IF NOT EXISTS `kaiin` (
-  `kaiin_id` BIGINT NOT NULL,
+  `kaiin_id` BIGINT NOT NULL AUTO_INCREMENT,
   `adana` VARCHAR(255) NOT NULL,
   `mail_address` VARCHAR(256) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `message` ;
 
 CREATE TABLE IF NOT EXISTS `message` (
-  `message_id` INT NOT NULL,
+  `message_id` INT NOT NULL AUTO_INCREMENT,
   `kaiin_id` BIGINT NOT NULL,
   `honbun` TEXT NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -106,3 +106,81 @@ CREATE TABLE IF NOT EXISTS `follower` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `iine`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `iine` ;
+
+CREATE TABLE IF NOT EXISTS `iine` (
+  `message_id` INT NOT NULL,
+  `kaiin_id` BIGINT NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `fk_iine_message1_idx` (`message_id` ASC) VISIBLE,
+  INDEX `fk_iine_kaiin1_idx` (`kaiin_id` ASC) VISIBLE,
+  PRIMARY KEY (`kaiin_id`, `message_id`),
+  CONSTRAINT `fk_iine_message1`
+    FOREIGN KEY (`message_id`)
+    REFERENCES `message` (`message_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_iine_kaiin1`
+    FOREIGN KEY (`kaiin_id`)
+    REFERENCES `kaiin` (`kaiin_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mongon`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mongon` ;
+
+CREATE TABLE IF NOT EXISTS `mongon` (
+  `mongon_id` INT NOT NULL AUTO_INCREMENT,
+  `key` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`mongon_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mongon_en`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mongon_en` ;
+
+CREATE TABLE IF NOT EXISTS `mongon_en` (
+  `mongon_id` INT NOT NULL,
+  `word` VARCHAR(256) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`mongon_id`),
+  CONSTRAINT `fk_mongon_en_mongon1`
+    FOREIGN KEY (`mongon_id`)
+    REFERENCES `mongon` (`mongon_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mongon_ja`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `mongon_ja` ;
+
+CREATE TABLE IF NOT EXISTS `mongon_ja` (
+  `mongon_id` INT NOT NULL,
+  `word` VARCHAR(256) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`mongon_id`),
+  CONSTRAINT `fk_mongon_ja_mongon1`
+    FOREIGN KEY (`mongon_id`)
+    REFERENCES `mongon` (`mongon_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
