@@ -20,8 +20,11 @@ jobs:
           MYSQL_PASSWORD: docker
         ports:
           - 3306:3306
+
     env:
       SKIP_DOCKER_COMPOSE: true
+      SQLX_VERSION: 0.6.2
+      SQLX_FEATURES: rustls,mysql
 
     steps:
       - name: Checkout repository
@@ -51,7 +54,7 @@ jobs:
           path: |
             ~/.cargo/bin/sqlx
             ~/.cargo/bin/cargo-sqlx
-          key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}-${{ env.SQLX_FEATURES }}
+          key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
 
       - name: Install sqlx-cli
         uses: actions-rs/cargo@v1
@@ -61,7 +64,8 @@ jobs:
           args: >
             sqlx-cli
             --force
-            --features=rustls,mysql
+            --version=${{ env.SQLX_VERSION }}
+            --features ${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
       - name: Create & Migrate database
