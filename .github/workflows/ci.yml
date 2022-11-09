@@ -20,7 +20,6 @@ jobs:
           MYSQL_PASSWORD: docker
         ports:
           - 3306:3306
-
     env:
       SKIP_DOCKER_COMPOSE: true
       SQLX_VERSION: 0.6.2
@@ -74,8 +73,8 @@ jobs:
         with:
           command: test
 
-  fmt:
-    name: Rustfmt
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -86,10 +85,16 @@ jobs:
         with:
           toolchain: stable
           override: true
-          components: rustfmt
+          components: [rustfmt, clippy]
 
-      - name: Run cargo fmt --all -- --check
+      - name: Run rustfmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
+
+      - name: Run clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- -D warnings
