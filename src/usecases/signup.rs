@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use serde::Serialize;
 use shaku::{Component, Interface};
+use time::OffsetDateTime;
 
 use super::models::Users;
 use crate::{
@@ -25,9 +27,30 @@ pub struct SignUpInput {
     pub password: String,
 }
 
+#[derive(Serialize, Debug)]
+pub struct SignUpOutput {
+    id: i64,
+    username: String,
+    email: String,
+    created_at: OffsetDateTime,
+    updated_at: OffsetDateTime,
+}
+
+impl From<Users> for SignUpOutput {
+    fn from(user: Users) -> Self {
+        Self {
+            id: user.kaiin_id,
+            username: user.adana,
+            email: user.mail_address,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        }
+    }
+}
+
 #[async_trait]
 pub trait SignUp: Interface {
-    async fn signup(&self, input: SignUpInput) -> Result<(), SignUpError>;
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError>;
 }
 
 #[derive(Component)]
@@ -39,7 +62,7 @@ pub struct SignUpUseCase {
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
-    async fn signup(&self, input: SignUpInput) -> Result<(), SignUpError> {
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError> {
         let username: Username = input.username.try_into()?;
         let email: Email = input.email.try_into()?;
         let password: Password = input.password.try_into()?;
@@ -58,7 +81,7 @@ impl SignUp for SignUpUseCase {
         .execute(&mut transaction)
         .await?;
 
-        let _users = sqlx::query_as!(
+        let user = sqlx::query_as!(
             Users,
             r#"
             SELECT kaiin_id, adana, mail_address, password, created_at, updated_at
@@ -72,6 +95,6 @@ impl SignUp for SignUpUseCase {
 
         transaction.commit().await?;
 
-        Ok(())
+        Ok(user.into())
     }
 }

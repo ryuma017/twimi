@@ -11,7 +11,7 @@ pub async fn signup(
     usecase
         .signup(json.into_inner().into())
         .await
-        .map(|_| HttpResponse::Ok().body("OK!!!!"))
+        .map(|user| HttpResponse::Ok().json(user))
 }
 
 #[derive(Debug, Deserialize)]
