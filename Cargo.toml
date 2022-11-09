@@ -9,12 +9,25 @@ rust-version = "1.65.0"
 [dependencies]
 actix-settings = "0.6.0"
 actix-web = "4.2.1"
+anyhow = "1.0.66"
+argon2 = { version = "0.4.1", features = ["std"] }
 async-trait = "0.1.58"
+rand = "0.8.5"
+serde = { version = "1.0.147", features = ["derive"] }
 shaku = "0.6.1"
 shaku_actix = "0.2.0"
-sqlx = { version = "0.6.2", default-features = false, features = ["runtime-actix-rustls", "mysql", "macros", "offline"] }
+sqlx = { version = "0.6.2", default-features = false, features = [
+    "runtime-actix-rustls",
+    "mysql",
+    "macros",
+    "offline",
+    "time",
+] }
 thiserror = "1.0.37"
+time = { version = "0.3.17", features = ["serde"] }
 tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }
+unicode-segmentation = "1.10.0"
+validator = "0.16.0"
 
 [dev-dependencies]
 reqwest = "0.11.12"

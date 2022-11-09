@@ -1,14 +1,15 @@
+pub mod domain;
 pub mod routes;
 pub mod startup;
 pub mod usecases;
 
-use crate::usecases::health_check::HealthCheckUseCase;
 use shaku::module;
 use startup::MySqlDatabase;
+use usecases::{health_check::HealthCheckUseCase, signup::SignUpUseCase};
 
 module! {
     pub AppModule {
-        components = [HealthCheckUseCase, MySqlDatabase],
+        components = [MySqlDatabase, HealthCheckUseCase, SignUpUseCase],
         providers = []
     }
 }
