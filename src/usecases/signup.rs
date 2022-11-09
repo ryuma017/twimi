@@ -5,7 +5,7 @@ use shaku::{Component, Interface};
 
 use super::models::Users;
 use crate::{
-    domain::{Email, Parse, ParseError, Password, Username},
+    domain::{ComputeHashError, Email, Parse, ParseError, Password, Username},
     startup::Database,
 };
 
@@ -15,6 +15,8 @@ pub enum SignUpError {
     DatabaseError(#[from] sqlx::Error),
     #[error(transparent)]
     ValidationError(#[from] ParseError),
+    #[error(transparent)]
+    UnexpectedError(#[from] ComputeHashError),
 }
 
 #[async_trait]
@@ -55,7 +57,7 @@ impl SignUp for SignUpUseCase {
             "#,
             username.as_ref(),
             email.as_ref(),
-            password.as_ref(),
+            password.compute_hash()?,
         )
         .execute(&mut transaction)
         .await?;

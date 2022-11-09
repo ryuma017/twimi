@@ -1,3 +1,7 @@
+use argon2::{
+    password_hash::{self, SaltString},
+    Algorithm, Argon2, Params, PasswordHasher, Version,
+};
 use unicode_segmentation::UnicodeSegmentation;
 use validator::validate_email;
 
@@ -8,6 +12,10 @@ pub trait Parse<T>: Sized {
 #[derive(Debug, thiserror::Error)]
 #[error("Failed to validate: {0}")]
 pub struct ParseError(String);
+
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct ComputeHashError(#[from] password_hash::Error); // requires "std" feature
 
 #[derive(Debug)]
 pub struct Username(String);
@@ -42,6 +50,20 @@ impl Parse<Password> for String {
                 "Username must be between 1 and 255 characters long.".into(),
             ))
         }
+    }
+}
+
+impl Password {
+    pub fn compute_hash(&self) -> Result<String, ComputeHashError> {
+        let salt = SaltString::generate(&mut rand::thread_rng());
+        let hashed = Argon2::new(
+            Algorithm::Argon2id,
+            Version::V0x13,
+            Params::new(15000, 2, 1, None).unwrap(), // params が正しければ panic しない
+        )
+        .hash_password(self.0.as_bytes(), &salt)?
+        .to_string();
+        Ok(hashed)
     }
 }
 

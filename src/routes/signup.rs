@@ -29,7 +29,9 @@ pub struct SignUpPayload {
 impl ResponseError for SignUpError {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
-            Self::DatabaseError(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
+            Self::DatabaseError(_) | Self::UnexpectedError(_) => {
+                actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+            }
             Self::ValidationError(_) => actix_web::http::StatusCode::BAD_REQUEST,
         }
     }
