@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use shaku::{Component, Interface};
 
-use crate::startup::Database;
+use crate::repositories::Database;
 
 #[derive(thiserror::Error, Debug)]
 pub enum HealthCheckError {

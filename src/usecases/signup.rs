@@ -7,7 +7,7 @@ use time::OffsetDateTime;
 
 use crate::{
     domain::{ComputeHashError, Email, Password, Username, ValidationError},
-    startup::Database,
+    repositories::Database,
 };
 
 #[derive(thiserror::Error, Debug)]
