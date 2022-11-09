@@ -1,19 +1,25 @@
-use std::str::FromStr;
-
 use unicode_segmentation::UnicodeSegmentation;
 use validator::validate_email;
 
+pub trait Parse<T>: Sized {
+    fn parse(self) -> Result<T, ParseError>;
+}
+
+#[derive(Debug, thiserror::Error)]
+#[error("Failed to validate: {0}")]
+pub struct ParseError(String);
+
 #[derive(Debug)]
-pub struct Username(String); // adana
+pub struct Username(String);
 
-impl FromStr for Username {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if valid_length(s, 1, 255) {
-            Ok(Self(s.into()))
+impl Parse<Username> for String {
+    fn parse(self) -> Result<Username, ParseError> {
+        if valid_length(&self, 1, 255) {
+            Ok(Username(self))
         } else {
-            Err("Username must be between 1 and 255 characters long.".into())
+            Err(ParseError(
+                "Username must be between 1 and 255 characters long.".into(),
+            ))
         }
     }
 }
@@ -21,14 +27,14 @@ impl FromStr for Username {
 #[derive(Debug)]
 pub struct Password(String);
 
-impl FromStr for Password {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if valid_length(s, 8, 50) {
-            Ok(Self(s.into()))
+impl Parse<Password> for String {
+    fn parse(self) -> Result<Password, ParseError> {
+        if valid_length(self.as_str(), 8, 50) {
+            Ok(Password(self))
         } else {
-            Err("Username must be between 1 and 255 characters long.".into())
+            Err(ParseError(
+                "Username must be between 1 and 255 characters long.".into(),
+            ))
         }
     }
 }
@@ -36,14 +42,12 @@ impl FromStr for Password {
 #[derive(Debug)]
 pub struct Email(String);
 
-impl FromStr for Email {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if validate_email(s) {
-            Ok(Self(s.into()))
+impl Parse<Email> for String {
+    fn parse(self) -> Result<Email, ParseError> {
+        if validate_email(&self) {
+            Ok(Email(self))
         } else {
-            Err(format!("{} is not a valid subscriber email.", s))
+            Err(ParseError(format!("{} is invalid email format.", self)))
         }
     }
 }
@@ -51,4 +55,11 @@ impl FromStr for Email {
 fn valid_length(s: &str, min: usize, max: usize) -> bool {
     let trimmed = s.trim();
     (min..=max).contains(&trimmed.graphemes(true).count())
+}
+
+#[derive(Debug)]
+pub struct NewUser {
+    pub username: Username,
+    pub email: Email,
+    pub password: Password,
 }

@@ -9,7 +9,7 @@ use shaku::{Component, Interface};
 use sqlx::mysql::{MySqlConnectOptions, MySqlPoolOptions};
 use sqlx::MySqlPool;
 
-use crate::routes::health_check;
+use crate::routes::{health_check, signup};
 use crate::AppModule;
 
 pub struct ApiServer {
@@ -32,6 +32,7 @@ impl ApiServer {
             App::new()
                 .wrap(NormalizePath::default())
                 .route("/health_check", web::get().to(health_check))
+                .route("/signup", web::post().to(signup))
                 .app_data(Arc::clone(&module))
         })
         .apply_settings(&settings)
