@@ -1,19 +1,17 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use serde::Serialize;
 use shaku::{Component, Interface};
-use time::OffsetDateTime;
 
 use crate::{
-    domain::{ComputeHashError, Email, Password, Username, ValidationError},
-    repositories::Database,
+    domain::{ComputeHashError, NewUser, ValidationError},
+    repositories::{UserRecord, UsersRepository},
 };
 
 #[derive(thiserror::Error, Debug)]
 pub enum SignUpError {
     #[error(transparent)]
-    DatabaseError(#[from] sqlx::Error),
+    DatabaseError(#[from] anyhow::Error),
     #[error(transparent)]
     ValidationError(#[from] ValidationError),
     #[error(transparent)]
@@ -26,55 +24,33 @@ pub struct SignUpInput {
     pub password: String,
 }
 
-#[derive(Serialize, Debug)]
-pub struct SignUpOutput {
-    id: u64,
-    username: String,
-    email: String,
-    created_at: OffsetDateTime,
-    updated_at: OffsetDateTime,
-}
-
 #[async_trait]
 pub trait SignUp: Interface {
-    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError>;
+    async fn signup(&self, input: SignUpInput) -> Result<UserRecord, SignUpError>;
 }
 
 #[derive(Component)]
 #[shaku(interface = SignUp)]
 pub struct SignUpUseCase {
     #[shaku(inject)]
-    database: Arc<dyn Database>,
+    repository: Arc<dyn UsersRepository>,
 }
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
-    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError> {
-        let username: Username = input.username.try_into()?;
-        let email: Email = input.email.try_into()?;
-        let password: Password = input.password.try_into()?;
-        let timestamp = OffsetDateTime::now_utc();
+    async fn signup(&self, input: SignUpInput) -> Result<UserRecord, SignUpError> {
+        Ok(self.repository.insert_user(input.try_into()?).await?)
+    }
+}
 
-        let result = sqlx::query!(
-            r#"
-            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?);
-            "#,
-            username.as_ref(),
-            email.as_ref(),
-            password.compute_hash()?,
-            timestamp,
-            timestamp
-        )
-        .execute(self.database.pool())
-        .await?;
+impl TryFrom<SignUpInput> for NewUser {
+    type Error = ValidationError;
 
-        Ok(SignUpOutput {
-            id: result.last_insert_id(),
-            username: username.as_ref().to_owned(),
-            email: email.as_ref().to_owned(),
-            created_at: timestamp,
-            updated_at: timestamp,
+    fn try_from(value: SignUpInput) -> Result<Self, Self::Error> {
+        Ok(NewUser {
+            username: value.username.try_into()?,
+            email: value.email.try_into()?,
+            password: value.password.try_into()?,
         })
     }
 }

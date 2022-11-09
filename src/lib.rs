@@ -6,12 +6,12 @@ pub mod usecases;
 
 use shaku::module;
 
-use repositories::{HealthCheckRepositoryImpl, MySqlDatabase};
-use usecases::{health_check::HealthCheckUseCase, signup::SignUpUseCase};
+use repositories::{HealthCheckRepositoryImpl, MySqlDatabase, UsersRepositoryImpl};
+use usecases::{HealthCheckUseCase, SignUpUseCase};
 
 module! {
     pub AppModule {
-        components = [MySqlDatabase, HealthCheckUseCase, SignUpUseCase, HealthCheckRepositoryImpl],
+        components = [MySqlDatabase, HealthCheckUseCase, SignUpUseCase, HealthCheckRepositoryImpl, UsersRepositoryImpl],
         providers = []
     }
 }
