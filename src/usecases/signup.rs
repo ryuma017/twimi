@@ -5,7 +5,7 @@ use shaku::{Component, Interface};
 
 use super::models::Users;
 use crate::{
-    domain::{ComputeHashError, Email, Parse, ParseError, Password, Username},
+    domain::{ComputeHashError, Email, Password, Username, ValidationError},
     startup::Database,
 };
 
@@ -14,19 +14,20 @@ pub enum SignUpError {
     #[error(transparent)]
     DatabaseError(#[from] sqlx::Error),
     #[error(transparent)]
-    ValidationError(#[from] ParseError),
+    ValidationError(#[from] ValidationError),
     #[error(transparent)]
     UnexpectedError(#[from] ComputeHashError),
 }
 
+pub struct SignUpInput {
+    pub username: String,
+    pub email: String,
+    pub password: String,
+}
+
 #[async_trait]
 pub trait SignUp: Interface {
-    async fn signup(
-        &self,
-        username: String,
-        email: String,
-        password: String,
-    ) -> Result<(), SignUpError>;
+    async fn signup(&self, input: SignUpInput) -> Result<(), SignUpError>;
 }
 
 #[derive(Component)]
@@ -38,15 +39,10 @@ pub struct SignUpUseCase {
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
-    async fn signup(
-        &self,
-        username: String,
-        email: String,
-        password: String,
-    ) -> Result<(), SignUpError> {
-        let username: Username = username.parse()?;
-        let email: Email = email.parse()?;
-        let password: Password = password.parse()?;
+    async fn signup(&self, input: SignUpInput) -> Result<(), SignUpError> {
+        let username: Username = input.username.try_into()?;
+        let email: Email = input.email.try_into()?;
+        let password: Password = input.password.try_into()?;
 
         let mut transaction = self.database.pool().begin().await?;
 

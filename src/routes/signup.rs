@@ -2,19 +2,14 @@ use actix_web::{web::Json, HttpResponse, ResponseError};
 use serde::Deserialize;
 
 use super::Inject;
-use crate::usecases::signup::{SignUp, SignUpError};
+use crate::usecases::signup::{SignUp, SignUpError, SignUpInput};
 
 pub async fn signup(
     usecase: Inject<dyn SignUp>,
     json: Json<SignUpPayload>,
 ) -> Result<HttpResponse, SignUpError> {
-    let SignUpPayload {
-        username,
-        email,
-        password,
-    } = json.into_inner();
     usecase
-        .signup(username, email, password)
+        .signup(json.into_inner().into())
         .await
         .map(|_| HttpResponse::Ok().body("OK!!!!"))
 }
@@ -33,6 +28,16 @@ impl ResponseError for SignUpError {
                 actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
             }
             Self::ValidationError(_) => actix_web::http::StatusCode::BAD_REQUEST,
+        }
+    }
+}
+
+impl From<SignUpPayload> for SignUpInput {
+    fn from(payload: SignUpPayload) -> Self {
+        Self {
+            username: payload.username,
+            email: payload.email,
+            password: payload.password,
         }
     }
 }

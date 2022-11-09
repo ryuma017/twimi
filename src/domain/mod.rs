@@ -5,13 +5,9 @@ use argon2::{
 use unicode_segmentation::UnicodeSegmentation;
 use validator::validate_email;
 
-pub trait Parse<T>: Sized {
-    fn parse(self) -> Result<T, ParseError>;
-}
-
 #[derive(Debug, thiserror::Error)]
 #[error("Failed to validate: {0}")]
-pub struct ParseError(String);
+pub struct ValidationError(String);
 
 #[derive(Debug, thiserror::Error)]
 #[error(transparent)]
@@ -20,15 +16,16 @@ pub struct ComputeHashError(#[from] password_hash::Error); // requires "std" fea
 #[derive(Debug)]
 pub struct Username(String);
 
-impl Parse<Username> for String {
-    fn parse(self) -> Result<Username, ParseError> {
-        if valid_length(&self, 1, 255) {
-            Ok(Username(self))
-        } else {
-            Err(ParseError(
+impl TryFrom<String> for Username {
+    type Error = ValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        if !valid_length(&value, 1, 255) {
+            return Err(ValidationError(
                 "Username must be between 1 and 255 characters long.".into(),
-            ))
+            ));
         }
+        Ok(Username(value))
     }
 }
 
@@ -41,15 +38,16 @@ impl AsRef<str> for Username {
 #[derive(Debug)]
 pub struct Password(String);
 
-impl Parse<Password> for String {
-    fn parse(self) -> Result<Password, ParseError> {
-        if valid_length(self.as_str(), 8, 50) {
-            Ok(Password(self))
-        } else {
-            Err(ParseError(
+impl TryFrom<String> for Password {
+    type Error = ValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        if !valid_length(&value, 8, 50) {
+            return Err(ValidationError(
                 "Username must be between 1 and 255 characters long.".into(),
-            ))
+            ));
         }
+        Ok(Password(value))
     }
 }
 
@@ -76,13 +74,17 @@ impl AsRef<str> for Password {
 #[derive(Debug)]
 pub struct Email(String);
 
-impl Parse<Email> for String {
-    fn parse(self) -> Result<Email, ParseError> {
-        if validate_email(&self) {
-            Ok(Email(self))
-        } else {
-            Err(ParseError(format!("{} is invalid email format.", self)))
+impl TryFrom<String> for Email {
+    type Error = ValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        if !validate_email(value.as_str()) {
+            return Err(ValidationError(format!(
+                "{} is invalid email format.",
+                value
+            )));
         }
+        Ok(Email(value))
     }
 }
 
