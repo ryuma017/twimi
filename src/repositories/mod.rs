@@ -1,3 +1,7 @@
+mod health_check;
+
+pub use health_check::{HealthCheckRepository, HealthCheckRepositoryImpl};
+
 use std::str::FromStr;
 
 use shaku::{Component, Interface};

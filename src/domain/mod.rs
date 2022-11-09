@@ -103,3 +103,9 @@ where
         false => Err(ValidationError(msg.into())),
     }
 }
+
+pub struct NewUser {
+    pub username: Username,
+    pub email: Email,
+    pub password: Password,
+}
