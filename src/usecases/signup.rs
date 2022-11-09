@@ -5,7 +5,6 @@ use serde::Serialize;
 use shaku::{Component, Interface};
 use time::OffsetDateTime;
 
-use super::models::Users;
 use crate::{
     domain::{ComputeHashError, Email, Password, Username, ValidationError},
     startup::Database,
@@ -29,23 +28,11 @@ pub struct SignUpInput {
 
 #[derive(Serialize, Debug)]
 pub struct SignUpOutput {
-    id: i64,
+    id: u64,
     username: String,
     email: String,
     created_at: OffsetDateTime,
     updated_at: OffsetDateTime,
-}
-
-impl From<Users> for SignUpOutput {
-    fn from(user: Users) -> Self {
-        Self {
-            id: user.kaiin_id,
-            username: user.adana,
-            email: user.mail_address,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-        }
-    }
 }
 
 #[async_trait]
@@ -66,35 +53,28 @@ impl SignUp for SignUpUseCase {
         let username: Username = input.username.try_into()?;
         let email: Email = input.email.try_into()?;
         let password: Password = input.password.try_into()?;
-
-        let mut transaction = self.database.pool().begin().await?;
+        let timestamp = OffsetDateTime::now_utc();
 
         let result = sqlx::query!(
             r#"
-            INSERT INTO kaiin (adana, mail_address, password, updated_at)
-            VALUES (?, ?, ?, current_timestamp);
+            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?);
             "#,
             username.as_ref(),
             email.as_ref(),
             password.compute_hash()?,
+            timestamp,
+            timestamp
         )
-        .execute(&mut transaction)
+        .execute(self.database.pool())
         .await?;
 
-        let user = sqlx::query_as!(
-            Users,
-            r#"
-            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at
-            FROM kaiin
-            WHERE kaiin_id = ?;
-            "#,
-            result.last_insert_id(),
-        )
-        .fetch_one(&mut transaction)
-        .await?;
-
-        transaction.commit().await?;
-
-        Ok(user.into())
+        Ok(SignUpOutput {
+            id: result.last_insert_id(),
+            username: username.as_ref().to_owned(),
+            email: email.as_ref().to_owned(),
+            created_at: timestamp,
+            updated_at: timestamp,
+        })
     }
 }
