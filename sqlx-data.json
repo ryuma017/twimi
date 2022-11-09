@@ -1,3 +1,103 @@
 {
-  "db": "MySQL"
+  "db": "MySQL",
+  "4bcf80dd9a87bf782f7a86e3b5ae3fc7ee4ae9a97d1c153a04439288e0ee3037": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n    INSERT INTO kaiin (adana, mail_address, password, updated_at)\n    VALUES (?, ?, ?, current_timestamp);\n    "
+  },
+  "9981177408340ba4ffd3d3f959441f94517960ee2999689540fda5fef469da05": {
+    "describe": {
+      "columns": [
+        {
+          "name": "kaiin_id",
+          "ordinal": 0,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 515
+            },
+            "max_size": 20,
+            "type": "LongLong"
+          }
+        },
+        {
+          "name": "adana",
+          "ordinal": 1,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4101
+            },
+            "max_size": 1020,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "mail_address",
+          "ordinal": 2,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4101
+            },
+            "max_size": 1024,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4097
+            },
+            "max_size": 1020,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 1153
+            },
+            "max_size": 19,
+            "type": "Timestamp"
+          }
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 5,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 4225
+            },
+            "max_size": 19,
+            "type": "Timestamp"
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at\n            FROM kaiin\n            WHERE kaiin_id = ?;\n            "
+  }
 }

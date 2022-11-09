@@ -1,12 +1,11 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use serde::Deserialize;
 use shaku::{Component, Interface};
 
 use super::models::Users;
 use crate::{
-    domain::{NewUser, Parse, ParseError},
+    domain::{Email, Parse, ParseError, Password, Username},
     startup::Database,
 };
 
@@ -18,26 +17,14 @@ pub enum SignUpError {
     ValidationError(#[from] ParseError),
 }
 
-#[derive(Debug, Deserialize)]
-pub struct SignUpPayload {
-    username: String,
-    email: String,
-    password: String,
-}
-
-impl Parse<NewUser> for SignUpPayload {
-    fn parse(self) -> Result<NewUser, ParseError> {
-        Ok(NewUser {
-            username: self.username.parse()?,
-            email: self.email.parse()?,
-            password: self.password.parse()?,
-        })
-    }
-}
-
 #[async_trait]
 pub trait SignUp: Interface {
-    async fn signup(&self, payload: SignUpPayload) -> Result<(), SignUpError>;
+    async fn signup(
+        &self,
+        username: String,
+        email: String,
+        password: String,
+    ) -> Result<(), SignUpError>;
 }
 
 #[derive(Component)]
@@ -49,8 +36,16 @@ pub struct SignUpUseCase {
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
-    async fn signup(&self, payload: SignUpPayload) -> Result<(), SignUpError> {
-        let new_user = payload.parse()?;
+    async fn signup(
+        &self,
+        username: String,
+        email: String,
+        password: String,
+    ) -> Result<(), SignUpError> {
+        let username: Username = username.parse()?;
+        let email: Email = email.parse()?;
+        let password: Password = password.parse()?;
+
         let mut transaction = self.database.pool().begin().await?;
 
         let result = sqlx::query!(
@@ -58,9 +53,9 @@ impl SignUp for SignUpUseCase {
             INSERT INTO kaiin (adana, mail_address, password, updated_at)
             VALUES (?, ?, ?, current_timestamp);
             "#,
-            new_user.username.as_ref(),
-            new_user.email.as_ref(),
-            new_user.password.as_ref(),
+            username.as_ref(),
+            email.as_ref(),
+            password.as_ref(),
         )
         .execute(&mut transaction)
         .await?;

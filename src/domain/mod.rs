@@ -74,10 +74,3 @@ impl AsRef<str> for Email {
         &self.0
     }
 }
-
-#[derive(Debug)]
-pub struct NewUser {
-    pub username: Username,
-    pub email: Email,
-    pub password: Password,
-}
