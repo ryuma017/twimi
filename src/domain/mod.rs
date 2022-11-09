@@ -20,11 +20,11 @@ impl TryFrom<String> for Username {
     type Error = ValidationError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        if !valid_length(&value, 1, 255) {
-            return Err(ValidationError(
-                "Username must be between 1 and 255 characters long.".into(),
-            ));
-        }
+        ensure_validated(
+            &value,
+            |v| validate_length(v, 1, 255),
+            "Username must be between 1 and 255 characters long.",
+        )?;
         Ok(Username(value))
     }
 }
@@ -42,11 +42,11 @@ impl TryFrom<String> for Password {
     type Error = ValidationError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        if !valid_length(&value, 8, 50) {
-            return Err(ValidationError(
-                "Username must be between 1 and 255 characters long.".into(),
-            ));
-        }
+        ensure_validated(
+            &value,
+            |v| validate_length(v, 8, 50),
+            "Password must be between 8 and 50 characters long.",
+        )?;
         Ok(Password(value))
     }
 }
@@ -78,17 +78,12 @@ impl TryFrom<String> for Email {
     type Error = ValidationError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        if !validate_email(value.as_str()) {
-            return Err(ValidationError(format!(
-                "{} is invalid email format.",
-                value
-            )));
-        }
+        ensure_validated(&value, validate_email, "Invalid email format.")?;
         Ok(Email(value))
     }
 }
 
-fn valid_length(s: &str, min: usize, max: usize) -> bool {
+fn validate_length(s: &str, min: usize, max: usize) -> bool {
     let trimmed = s.trim();
     (min..=max).contains(&trimmed.graphemes(true).count())
 }
@@ -96,5 +91,15 @@ fn valid_length(s: &str, min: usize, max: usize) -> bool {
 impl AsRef<str> for Email {
     fn as_ref(&self) -> &str {
         &self.0
+    }
+}
+
+fn ensure_validated<V, F>(value: V, f: F, msg: &str) -> Result<(), ValidationError>
+where
+    F: FnOnce(V) -> bool,
+{
+    match f(value) {
+        true => Ok(()),
+        false => Err(ValidationError(msg.into())),
     }
 }
