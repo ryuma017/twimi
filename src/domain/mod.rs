@@ -24,6 +24,12 @@ impl Parse<Username> for String {
     }
 }
 
+impl AsRef<str> for Username {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
 #[derive(Debug)]
 pub struct Password(String);
 
@@ -36,6 +42,12 @@ impl Parse<Password> for String {
                 "Username must be between 1 and 255 characters long.".into(),
             ))
         }
+    }
+}
+
+impl AsRef<str> for Password {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 
@@ -55,6 +67,12 @@ impl Parse<Email> for String {
 fn valid_length(s: &str, min: usize, max: usize) -> bool {
     let trimmed = s.trim();
     (min..=max).contains(&trimmed.graphemes(true).count())
+}
+
+impl AsRef<str> for Email {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
 }
 
 #[derive(Debug)]

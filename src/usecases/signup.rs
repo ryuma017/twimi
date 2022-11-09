@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use serde::Deserialize;
 use shaku::{Component, Interface};
 
+use super::models::Users;
 use crate::{
     domain::{NewUser, Parse, ParseError},
     startup::Database,
@@ -49,9 +50,34 @@ pub struct SignUpUseCase {
 #[async_trait]
 impl SignUp for SignUpUseCase {
     async fn signup(&self, payload: SignUpPayload) -> Result<(), SignUpError> {
-        // usecase logic
-        let _new_user = payload.parse()?;
-        let _pool = self.database.pool();
+        let new_user = payload.parse()?;
+        let mut transaction = self.database.pool().begin().await?;
+
+        let result = sqlx::query!(
+            r#"
+            INSERT INTO kaiin (adana, mail_address, password, updated_at)
+            VALUES (?, ?, ?, current_timestamp);
+            "#,
+            new_user.username.as_ref(),
+            new_user.email.as_ref(),
+            new_user.password.as_ref(),
+        )
+        .execute(&mut transaction)
+        .await?;
+
+        let _users = sqlx::query_as!(
+            Users,
+            r#"
+            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at
+            FROM kaiin
+            WHERE kaiin_id = ?;
+            "#,
+            result.last_insert_id(),
+        )
+        .fetch_one(&mut transaction)
+        .await?;
+
+        transaction.commit().await?;
 
         Ok(())
     }
