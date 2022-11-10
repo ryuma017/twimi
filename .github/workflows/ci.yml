@@ -66,7 +66,7 @@ jobs:
         run: ./scripts/init_mysql.sh
 
       - name: Check if sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin twimi
+        run: cargo sqlx prepare --check --merged
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
