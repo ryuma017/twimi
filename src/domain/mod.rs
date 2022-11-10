@@ -1,3 +1,8 @@
+mod user;
+pub use user::{NewUser, User};
+
+use std::marker::PhantomData;
+
 use argon2::{
     password_hash::{self, SaltString},
     Algorithm, Argon2, Params, PasswordHasher, Version,
@@ -12,6 +17,29 @@ pub struct ValidationError(String);
 #[derive(Debug, thiserror::Error)]
 #[error(transparent)]
 pub struct ComputeHashError(#[from] password_hash::Error); // requires "std" feature
+
+pub struct Id<T> {
+    pub value: u64,
+    _marker: PhantomData<T>,
+}
+
+impl<T> From<u64> for Id<T> {
+    fn from(value: u64) -> Self {
+        Self {
+            value,
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<T> Default for Id<T> {
+    fn default() -> Self {
+        Self {
+            value: Default::default(),
+            _marker: PhantomData,
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct Username(String);

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use shaku::{Component, Interface};
 
-use crate::startup::Database;
+use crate::repositories::HealthCheckRepository;
 
 #[derive(thiserror::Error, Debug)]
 pub enum HealthCheckError {
@@ -20,15 +20,13 @@ pub trait HealthCheck: Interface {
 #[shaku(interface = HealthCheck)]
 pub struct HealthCheckUseCase {
     #[shaku(inject)]
-    database: Arc<dyn Database>,
+    repository: Arc<dyn HealthCheckRepository>,
 }
 
 #[async_trait]
 impl HealthCheck for HealthCheckUseCase {
     async fn health_check(&self) -> Result<(), HealthCheckError> {
-        sqlx::query("SELECT 1")
-            .fetch_one(self.database.pool())
-            .await?;
+        self.repository.health_check().await?;
         Ok(())
     }
 }
