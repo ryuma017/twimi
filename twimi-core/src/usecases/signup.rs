@@ -3,14 +3,17 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use shaku::{Component, Interface};
 
-use crate::{
-    domain::{ComputeHashError, NewUser, User, ValidationError},
-    repositories::UsersRepository,
+use crate::domain::{
+    models::{
+        user::{NewUser, User},
+        ComputeHashError, ValidationError,
+    },
+    repositories::users::UsersRepository,
 };
 
 #[async_trait]
 pub trait SignUp: Interface {
-    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError>;
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpUseCaseError>;
 }
 
 #[derive(Component)]
@@ -22,13 +25,13 @@ pub struct SignUpUseCase {
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
-    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError> {
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpUseCaseError> {
         Ok(self.repository.insert_user(input.try_into()?).await?.into())
     }
 }
 
 #[derive(thiserror::Error, Debug)]
-pub enum SignUpError {
+pub enum SignUpUseCaseError {
     #[error(transparent)]
     DatabaseError(#[from] anyhow::Error),
     #[error(transparent)]

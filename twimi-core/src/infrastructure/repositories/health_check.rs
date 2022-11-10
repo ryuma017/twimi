@@ -1,14 +1,9 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use shaku::{Component, Interface};
+use shaku::Component;
 
-use super::Database;
-
-#[async_trait]
-pub trait HealthCheckRepository: Interface {
-    async fn health_check(&self) -> Result<(), sqlx::Error>;
-}
+use crate::{domain::repositories::health_check::HealthCheckRepository, infrastructure::Database};
 
 #[derive(Component)]
 #[shaku(interface = HealthCheckRepository)]

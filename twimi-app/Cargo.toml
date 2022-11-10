@@ -1,8 +1,24 @@
 [package]
 name = "twimi-app"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "twimi-app"
+path = "src/bin/main.rs"
+
+[lib]
+path = "src/lib.rs"
 
 [dependencies]
+twimi-core = { path = "../twimi-core" }
+
+actix-settings = "0.6.0"
+actix-web = "4.2.1"
+shaku_actix = "0.2.0"
+serde = { version = "1.0.147", features = ["derive"] }
+tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }
+thiserror = "1.0.37"
+time = { version = "0.3.17", features = ["serde"] }
+

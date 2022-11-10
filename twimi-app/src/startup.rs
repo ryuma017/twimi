@@ -6,8 +6,8 @@ use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
 
 use super::routes::{health_check, signup};
-use crate::repositories::Database;
-use crate::{AppModule, MySqlDatabase};
+use twimi_core::infrastructure::Database;
+use twimi_core::{AppModule, MySqlDatabase};
 
 pub struct ApiServer {
     port: u16,

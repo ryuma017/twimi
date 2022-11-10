@@ -1,14 +1,18 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+pub mod domain;
+pub mod infrastructure;
+pub mod usecases;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use shaku::module;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+pub use infrastructure::{
+    repositories::{health_check::HealthCheckRepositoryImpl, users::UsersRepositoryImpl},
+    MySqlDatabase,
+};
+pub use usecases::{health_check::HealthCheckUseCase, signup::SignUpUseCase};
+
+module! {
+    pub AppModule {
+        components = [MySqlDatabase, HealthCheckUseCase, SignUpUseCase, HealthCheckRepositoryImpl, UsersRepositoryImpl],
+        providers = []
     }
 }

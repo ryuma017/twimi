@@ -1,7 +1,7 @@
 use actix_web::{HttpResponse, ResponseError};
 
 use super::Inject;
-use crate::usecases::health_check::{HealthCheck, HealthCheckError};
+use twimi_core::usecases::health_check::{HealthCheck, HealthCheckUseCaseError};
 
 pub async fn health_check(
     usecase: Inject<dyn HealthCheck>,
@@ -13,10 +13,16 @@ pub async fn health_check(
         .finish())
 }
 
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct HealthCheckError(#[from] HealthCheckUseCaseError);
+
 impl ResponseError for HealthCheckError {
     fn status_code(&self) -> actix_web::http::StatusCode {
-        match self {
-            Self::DatabaseError(_) => actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+        match self.0 {
+            HealthCheckUseCaseError::DatabaseError(_) => {
+                actix_web::http::StatusCode::SERVICE_UNAVAILABLE
+            }
         }
     }
 }

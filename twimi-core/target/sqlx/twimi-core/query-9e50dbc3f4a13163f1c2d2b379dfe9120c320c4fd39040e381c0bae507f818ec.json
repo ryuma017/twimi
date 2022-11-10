@@ -1,0 +1,11 @@
+{
+  "query": "\n            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?);\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "268ef796170ec1d2693bac4f5dd4f1d767045b314433d3f821e773e57800df8d"
+}

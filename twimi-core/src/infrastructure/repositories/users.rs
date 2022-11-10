@@ -1,15 +1,14 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use shaku::{Component, Interface};
+use shaku::Component;
 
-use super::{models::KaiinTable, Database};
-use crate::domain::{NewUser, User};
-
-#[async_trait]
-pub trait UsersRepository: Interface {
-    async fn insert_user(&self, user: NewUser) -> Result<User, anyhow::Error>;
-}
+use crate::{
+    domain::models::user::{NewUser, User},
+    domain::repositories::users::UsersRepository,
+    infrastructure::models::kaiin::KaiinTable,
+    infrastructure::Database,
+};
 
 #[derive(Component)]
 #[shaku(interface = UsersRepository)]

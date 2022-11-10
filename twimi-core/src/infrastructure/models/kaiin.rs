@@ -1,7 +1,7 @@
 use sqlx::FromRow;
 use time::OffsetDateTime;
 
-use crate::domain::{NewUser, User};
+use crate::domain::models::user::{NewUser, User};
 
 #[allow(unused)]
 #[derive(FromRow)]
