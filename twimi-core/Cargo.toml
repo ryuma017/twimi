@@ -13,13 +13,6 @@ argon2 = { version = "0.4.1", features = ["std"] }
 async-trait = "0.1.58"
 rand = "0.8.5"
 shaku = "0.6.1"
-sqlx = { version = "0.6.2", default-features = false, features = [
-    "runtime-actix-rustls",
-    "mysql",
-    "macros",
-    "offline",
-    "time",
-] }
 thiserror = "1.0.37"
 time = { version = "0.3.17", features = ["serde"] }
 unicode-segmentation = "1.10.0"

@@ -8,7 +8,7 @@ use crate::domain::repositories::health_check::HealthCheckRepository;
 #[derive(thiserror::Error, Debug)]
 pub enum HealthCheckUseCaseError {
     #[error("Failed to acquire a connection from the pool")]
-    DatabaseError(#[from] sqlx::Error),
+    DatabaseError(#[from] anyhow::Error),
 }
 
 #[async_trait]

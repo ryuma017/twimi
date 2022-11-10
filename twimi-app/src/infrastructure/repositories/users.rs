@@ -3,12 +3,12 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use shaku::Component;
 
-use crate::{
+use twimi_core::{
     domain::models::user::{NewUser, User},
     domain::repositories::users::UsersRepository,
-    infrastructure::models::kaiin::KaiinTable,
-    infrastructure::Database,
 };
+
+use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::Database};
 
 #[derive(Component)]
 #[shaku(interface = UsersRepository)]

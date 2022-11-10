@@ -1,7 +1,7 @@
 use sqlx::FromRow;
 use time::OffsetDateTime;
 
-use crate::domain::models::user::{NewUser, User};
+use twimi_core::domain::models::user::{NewUser, User};
 
 #[allow(unused)]
 #[derive(FromRow)]

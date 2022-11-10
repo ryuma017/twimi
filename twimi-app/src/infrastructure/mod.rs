@@ -3,11 +3,13 @@ pub mod repositories;
 
 use std::str::FromStr;
 
-use shaku::Component;
+use shaku::{Component, Interface};
 use sqlx::mysql::{MySqlConnectOptions, MySqlPoolOptions};
 use sqlx::MySqlPool;
 
-use crate::domain::repositories::Database;
+pub trait Database: Interface {
+    fn pool(&self) -> &MySqlPool;
+}
 
 #[derive(Component)]
 #[shaku(interface = Database)]
