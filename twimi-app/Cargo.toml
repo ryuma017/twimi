@@ -1,0 +1,36 @@
+[package]
+name = "twimi-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "twimi-app"
+path = "src/bin/main.rs"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+actix-settings = "0.6.0"
+actix-web = "4.2.1"
+anyhow = "1.0.66"
+async-trait = "0.1.58"
+shaku = "0.6.1"
+shaku_actix = "0.2.0"
+serde = { version = "1.0.147", features = ["derive"] }
+sqlx = { version = "0.6.2", default-features = false, features = [
+    "runtime-actix-rustls",
+    "mysql",
+    "macros",
+    "offline",
+    "time",
+] }
+tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }
+thiserror = "1.0.37"
+time = { version = "0.3.17", features = ["serde"] }
+
+twimi-core = { path = "../twimi-core" }
+
+[dev-dependencies]
+reqwest = "0.11.12"
