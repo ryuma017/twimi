@@ -8,11 +8,20 @@ use infrastructure::{
     repositories::{health_check::HealthCheckRepositoryImpl, users::UsersRepositoryImpl},
     MySqlDatabase,
 };
-use twimi_core::usecases::{health_check::HealthCheckUseCase, signup::SignUpUseCase};
+use twimi_core::usecases::{
+    health_check::HealthCheckUseCase, login::LoginUseCase, signup::SignUpUseCase,
+};
 
 module! {
     pub AppModule {
-        components = [MySqlDatabase, HealthCheckUseCase, SignUpUseCase, HealthCheckRepositoryImpl, UsersRepositoryImpl],
+        components = [
+            MySqlDatabase,
+            HealthCheckRepositoryImpl,
+            UsersRepositoryImpl,
+            HealthCheckUseCase,
+            SignUpUseCase,
+            LoginUseCase,
+        ],
         providers = []
     }
 }

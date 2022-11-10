@@ -10,6 +10,10 @@ pub struct ValidationError(String);
 #[error(transparent)]
 pub struct ComputeHashError(#[from] argon2::password_hash::Error); // requires "std" feature
 
+#[derive(Debug, thiserror::Error)]
+#[error("User not found: {0}")]
+pub struct InvalidCredentials(String);
+
 pub struct Id<T> {
     pub value: u64,
     _marker: PhantomData<T>,

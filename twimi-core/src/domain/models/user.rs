@@ -29,6 +29,11 @@ impl User {
     }
 }
 
+pub struct UserCredentials {
+    pub username: Username,
+    pub password: Password,
+}
+
 #[derive(Debug)]
 pub struct Username(String);
 
