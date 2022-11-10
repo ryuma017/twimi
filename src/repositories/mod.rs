@@ -1,8 +1,9 @@
 mod health_check;
+mod models;
 mod users;
 
 pub use health_check::{HealthCheckRepository, HealthCheckRepositoryImpl};
-pub use users::{UserRecord, UsersRepository, UsersRepositoryImpl};
+pub use users::{UsersRepository, UsersRepositoryImpl};
 
 use std::str::FromStr;
 

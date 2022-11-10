@@ -2,14 +2,13 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use shaku::{Component, Interface};
-use time::OffsetDateTime;
 
-use super::Database;
-use crate::domain::NewUser;
+use super::{models::KaiinTable, Database};
+use crate::domain::{NewUser, User};
 
 #[async_trait]
 pub trait UsersRepository: Interface {
-    async fn insert_user(&self, user: NewUser) -> Result<UserRecord, anyhow::Error>;
+    async fn insert_user(&self, user: NewUser) -> Result<User, anyhow::Error>;
 }
 
 #[derive(Component)]
@@ -21,43 +20,24 @@ pub struct UsersRepositoryImpl {
 
 #[async_trait]
 impl UsersRepository for UsersRepositoryImpl {
-    async fn insert_user(
-        &self,
-        NewUser {
-            username,
-            email,
-            password,
-        }: NewUser,
-    ) -> Result<UserRecord, anyhow::Error> {
-        let timestamp = OffsetDateTime::now_utc();
-        let result = sqlx::query!(
+    async fn insert_user(&self, new_user: NewUser) -> Result<User, anyhow::Error> {
+        let kaiin: KaiinTable = new_user.try_into()?;
+        let kaiin_id = sqlx::query_as!(
+            KaiinTable,
             r#"
             INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?);
             "#,
-            username.as_ref(),
-            email.as_ref(),
-            password.compute_hash()?,
-            timestamp,
-            timestamp,
+            kaiin.adana,
+            kaiin.mail_address,
+            kaiin.password,
+            kaiin.created_at,
+            kaiin.updated_at
         )
         .execute(self.database.pool())
-        .await?;
-        Ok(UserRecord {
-            id: result.last_insert_id(),
-            username: username.as_ref().to_owned(),
-            email: email.as_ref().to_owned(),
-            created_at: timestamp,
-            updated_at: timestamp,
-        })
-    }
-}
+        .await?
+        .last_insert_id();
 
-#[derive(Debug, serde::Serialize)]
-pub struct UserRecord {
-    pub id: u64,
-    pub username: String,
-    pub email: String,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+        Ok(kaiin.try_into().map(|user: User| user.set_id(kaiin_id))?)
+    }
 }

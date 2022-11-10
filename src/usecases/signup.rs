@@ -4,9 +4,28 @@ use async_trait::async_trait;
 use shaku::{Component, Interface};
 
 use crate::{
-    domain::{ComputeHashError, NewUser, ValidationError},
-    repositories::{UserRecord, UsersRepository},
+    domain::{ComputeHashError, NewUser, User, ValidationError},
+    repositories::UsersRepository,
 };
+
+#[async_trait]
+pub trait SignUp: Interface {
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError>;
+}
+
+#[derive(Component)]
+#[shaku(interface = SignUp)]
+pub struct SignUpUseCase {
+    #[shaku(inject)]
+    repository: Arc<dyn UsersRepository>,
+}
+
+#[async_trait]
+impl SignUp for SignUpUseCase {
+    async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpError> {
+        Ok(self.repository.insert_user(input.try_into()?).await?.into())
+    }
+}
 
 #[derive(thiserror::Error, Debug)]
 pub enum SignUpError {
@@ -24,25 +43,6 @@ pub struct SignUpInput {
     pub password: String,
 }
 
-#[async_trait]
-pub trait SignUp: Interface {
-    async fn signup(&self, input: SignUpInput) -> Result<UserRecord, SignUpError>;
-}
-
-#[derive(Component)]
-#[shaku(interface = SignUp)]
-pub struct SignUpUseCase {
-    #[shaku(inject)]
-    repository: Arc<dyn UsersRepository>,
-}
-
-#[async_trait]
-impl SignUp for SignUpUseCase {
-    async fn signup(&self, input: SignUpInput) -> Result<UserRecord, SignUpError> {
-        Ok(self.repository.insert_user(input.try_into()?).await?)
-    }
-}
-
 impl TryFrom<SignUpInput> for NewUser {
     type Error = ValidationError;
 
@@ -52,5 +52,15 @@ impl TryFrom<SignUpInput> for NewUser {
             email: value.email.try_into()?,
             password: value.password.try_into()?,
         })
+    }
+}
+
+pub struct SignUpOutput {
+    pub user: User,
+}
+
+impl From<User> for SignUpOutput {
+    fn from(user: User) -> Self {
+        Self { user }
     }
 }

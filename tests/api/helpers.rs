@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use reqwest::Url;
 
-use twimi::startup::ApiServer;
+use twimi::app::startup::ApiServer;
 
 pub async fn spawn_app() -> Url {
     let server = ApiServer::build().expect("Failed to build server as a background task");

@@ -5,8 +5,8 @@ use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
 
+use super::routes::{health_check, signup};
 use crate::repositories::Database;
-use crate::routes::{health_check, signup};
 use crate::{AppModule, MySqlDatabase};
 
 pub struct ApiServer {
