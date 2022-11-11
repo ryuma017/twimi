@@ -5,6 +5,7 @@ on: [push, pull_request]
 env:
   CARGO_TERM_COLOR: always
   DATABASE_URL: mysql://docker:docker@127.0.0.1:3306/twimi
+  SECRET_KEY: secret
 
 jobs:
   test:

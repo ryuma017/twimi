@@ -9,9 +9,9 @@ use twimi_core::domain::services::JwtEncoder;
 
 use crate::infrastructure::Secret;
 
-#[derive(Debug, Serialize)]
-struct Claims<'a> {
-    name: &'a str,
+#[derive(Debug, Deserialize, Serialize)]
+struct Claims {
+    name: String,
 }
 
 #[derive(Component)]
@@ -25,7 +25,9 @@ impl JwtEncoder for JwtEncoderImpl {
     fn encode(&self, username: &str) -> Result<String, anyhow::Error> {
         encode(
             &jsonwebtoken::Header::default(),
-            &Claims { name: username },
+            &Claims {
+                name: username.to_owned(),
+            },
             &EncodingKey::from_secret(self.secret.get_secret().as_bytes()),
         )
         .context("Failed to encode JWT.")

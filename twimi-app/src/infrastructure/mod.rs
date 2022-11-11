@@ -57,8 +57,21 @@ pub struct JwtSecret {
     value: String,
 }
 
+impl JwtSecret {
+    pub fn new() -> Self {
+        let value = std::env::var("SECRET_KEY").expect("SECRET_KEY must be set.");
+        Self { value }
+    }
+}
+
+impl Default for JwtSecret {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Secret for JwtSecret {
     fn get_secret(&self) -> String {
-        std::env::var("SECRET_KEY").expect("SECRET_KEY must be set.")
+        self.value.to_owned()
     }
 }

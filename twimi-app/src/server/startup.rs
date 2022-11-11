@@ -6,7 +6,7 @@ use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
 
 use super::routes::{health_check, login, signup};
-use crate::infrastructure::{Database, MySqlDatabase};
+use crate::infrastructure::{Database, JwtSecret, MySqlDatabase, Secret};
 use crate::AppModule;
 
 pub struct ApiServer {
@@ -24,6 +24,7 @@ impl ApiServer {
         let module = Arc::new(
             AppModule::builder()
                 .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
+                .with_component_override::<dyn Secret>(Box::new(JwtSecret::new()))
                 .build(),
         );
 
