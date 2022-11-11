@@ -8,12 +8,12 @@ use crate::server::models;
 
 pub async fn login(
     usecase: Inject<dyn Login>,
-    json: Json<LoginRequestJson>,
+    json: Json<LoginRequest>,
 ) -> Result<HttpResponse, LoginError> {
     Ok(usecase
         .login(json.into_inner().into())
         .await
-        .map(|v| HttpResponse::Ok().json(LoginResponseJson::from(&v)))?)
+        .map(|v| HttpResponse::Ok().json(LoginResponse::from(&v)))?)
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -31,13 +31,13 @@ impl ResponseError for LoginError {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct LoginRequestJson {
+pub struct LoginRequest {
     username: String,
     password: String,
 }
 
-impl From<LoginRequestJson> for LoginInput {
-    fn from(value: LoginRequestJson) -> Self {
+impl From<LoginRequest> for LoginInput {
+    fn from(value: LoginRequest) -> Self {
         Self {
             username: value.username,
             password: value.password,
@@ -46,12 +46,12 @@ impl From<LoginRequestJson> for LoginInput {
 }
 
 #[derive(Debug, Serialize)]
-pub struct LoginResponseJson<'a> {
+pub struct LoginResponse<'a> {
     user: models::User<'a>,
     access_token: &'a str,
 }
 
-impl<'a> From<&'a LoginOutput> for LoginResponseJson<'a> {
+impl<'a> From<&'a LoginOutput> for LoginResponse<'a> {
     fn from(output: &'a LoginOutput) -> Self {
         Self {
             user: models::User::from(&output.user),

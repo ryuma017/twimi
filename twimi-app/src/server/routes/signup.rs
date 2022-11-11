@@ -8,13 +8,12 @@ use crate::server::models;
 
 pub async fn signup(
     usecase: Inject<dyn SignUp>,
-    json: Json<SignUpRequestJson>,
+    json: Json<SignUpRequest>,
 ) -> Result<HttpResponse, SignUpError> {
     Ok(usecase
         .signup(json.into_inner().into())
         .await
-        .map(|v| HttpResponse::Ok().json(SignUpResponseJson::from(&v)))?)
-    // .map(|user| HttpResponse::Ok().json(user.as_ref()))
+        .map(|v| HttpResponse::Ok().json(SignUpResponse::from(&v)))?)
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -33,14 +32,14 @@ impl ResponseError for SignUpError {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct SignUpRequestJson {
+pub struct SignUpRequest {
     username: String,
     email: String,
     password: String,
 }
 
-impl From<SignUpRequestJson> for SignUpInput {
-    fn from(payload: SignUpRequestJson) -> Self {
+impl From<SignUpRequest> for SignUpInput {
+    fn from(payload: SignUpRequest) -> Self {
         Self {
             username: payload.username,
             email: payload.email,
@@ -49,16 +48,10 @@ impl From<SignUpRequestJson> for SignUpInput {
     }
 }
 
-type SignUpResponseJson<'a> = models::User<'a>;
+type SignUpResponse<'a> = models::User<'a>;
 
-impl<'a> From<&'a SignUpOutput> for SignUpResponseJson<'a> {
+impl<'a> From<&'a SignUpOutput> for SignUpResponse<'a> {
     fn from(value: &'a SignUpOutput) -> Self {
         models::User::from(&value.user)
     }
 }
-
-// impl<'a> AsRef<SignUpResponseJson<'a>> for SignUpOutput {
-//     fn as_ref(&self) -> &SignUpResponseJson<'a> {
-//         unsafe { &*(self as *const Self as *const SignUpResponseJson) }
-//     }
-// }
