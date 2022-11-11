@@ -1,10 +1,10 @@
 use actix_web::{http::StatusCode, web::Json, HttpResponse, ResponseError};
 use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
 
 use twimi_core::usecases::login::{Login, LoginInput, LoginOutput, LoginUseCaseError};
 
 use super::Inject;
+use crate::server::models;
 
 pub async fn login(
     usecase: Inject<dyn Login>,
@@ -36,38 +36,26 @@ pub struct LoginRequestJson {
     password: String,
 }
 
-#[derive(Debug, Serialize)]
-pub struct LoginResponseJson<'a> {
-    user: Inner<'a>,
-    access_token: &'a str,
+impl From<LoginRequestJson> for LoginInput {
+    fn from(value: LoginRequestJson) -> Self {
+        Self {
+            username: value.username,
+            password: value.password,
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
-pub struct Inner<'a> {
-    id: u64,
-    username: &'a str,
-    email: &'a str,
-    created_at: &'a OffsetDateTime,
-    updated_at: &'a OffsetDateTime,
+pub struct LoginResponseJson<'a> {
+    user: models::User<'a>,
+    access_token: &'a str,
 }
 
 impl<'a> From<&'a LoginOutput> for LoginResponseJson<'a> {
     fn from(output: &'a LoginOutput) -> Self {
         Self {
-            user: Inner::from(&output.user),
+            user: models::User::from(&output.user),
             access_token: &output.access_token,
-        }
-    }
-}
-
-impl<'a> From<&'a LoginOutput> for Inner<'a> {
-    fn from(user: &'a LoginOutput) -> Self {
-        Self {
-            id: user.user.id(),
-            username: user.user.username.as_ref(),
-            email: user.user.email.as_ref(),
-            created_at: &user.user.created_at,
-            updated_at: &user.user.updated_at,
         }
     }
 }

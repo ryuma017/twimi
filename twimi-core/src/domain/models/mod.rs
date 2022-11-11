@@ -1,5 +1,7 @@
 pub mod user;
 
+pub use user::User;
+
 use std::marker::PhantomData;
 
 #[derive(Debug, thiserror::Error)]
@@ -8,19 +10,19 @@ pub struct ValidationError(String);
 
 #[derive(Debug, thiserror::Error)]
 #[error(transparent)]
-pub struct ComputeHashError(#[from] argon2::password_hash::Error); // requires "std" feature
+pub struct ComputeHashError(#[from] anyhow::Error);
 
 #[derive(Debug, thiserror::Error)]
 #[error("User not found: {0}")]
 pub struct InvalidCredentials(String);
 
 pub struct Id<T> {
-    pub value: u64,
+    pub value: i64,
     _marker: PhantomData<T>,
 }
 
-impl<T> From<u64> for Id<T> {
-    fn from(value: u64) -> Self {
+impl<T> From<i64> for Id<T> {
+    fn from(value: i64) -> Self {
         Self {
             value,
             _marker: PhantomData,
