@@ -7,7 +7,7 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{user::User, ValidationError},
     repositories::users::UsersRepository,
-    services::{InvalidCredentials, PasswordVerifier},
+    services::{InvalidCredentials, JwtEncoder, PasswordVerifier},
 };
 
 #[async_trait]
@@ -21,7 +21,9 @@ pub struct LoginUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
     #[shaku(inject)]
-    service: Arc<dyn PasswordVerifier>,
+    password_service: Arc<dyn PasswordVerifier>,
+    #[shaku(inject)]
+    jwt_service: Arc<dyn JwtEncoder>,
 }
 
 #[async_trait]
@@ -32,10 +34,10 @@ impl Login for LoginUseCase {
             .find_user_by_username(input.username.try_into()?)
             .await?
             .context("User not Found.")?;
-        self.service
+        self.password_service
             .verify_password_hash(input.password, user.password_hash.clone())?;
 
-        let access_token = encode_jwt(SELECT_KEY, user.username.as_ref());
+        let access_token = self.jwt_service.encode(user.username.as_ref())?;
 
         Ok(LoginOutput { user, access_token })
     }
@@ -59,29 +61,4 @@ pub struct LoginInput {
 pub struct LoginOutput {
     pub user: User,
     pub access_token: String,
-}
-
-// なぐり書き ---------------
-
-use jsonwebtoken::{encode, EncodingKey};
-use serde::{Deserialize, Serialize};
-
-const SELECT_KEY: &str = "secret";
-
-#[derive(Debug, Deserialize, Serialize)]
-struct Claims {
-    name: String,
-}
-
-fn encode_jwt(secret: &str, username: &str) -> String {
-    let header = jsonwebtoken::Header::default();
-    let claim = Claims {
-        name: username.to_owned(),
-    };
-    encode(
-        &header,
-        &claim,
-        &EncodingKey::from_secret(secret.as_bytes()),
-    )
-    .unwrap()
 }

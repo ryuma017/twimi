@@ -22,7 +22,7 @@ impl MySqlDatabase {
     pub fn new() -> Self {
         let options = MySqlConnectOptions::from_str(
             std::env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set")
+                .expect("DATABASE_URL must be set.")
                 .as_str(),
         )
         .unwrap();
@@ -44,5 +44,21 @@ impl Default for MySqlDatabase {
 impl Database for MySqlDatabase {
     fn pool(&self) -> &MySqlPool {
         &self.pool
+    }
+}
+
+pub trait Secret: Interface {
+    fn get_secret(&self) -> String;
+}
+
+#[derive(Component)]
+#[shaku(interface = Secret)]
+pub struct JwtSecret {
+    value: String,
+}
+
+impl Secret for JwtSecret {
+    fn get_secret(&self) -> String {
+        std::env::var("SECRET_KEY").expect("SECRET_KEY must be set.")
     }
 }

@@ -2219,6 +2219,7 @@ dependencies = [
  "anyhow",
  "argon2",
  "async-trait",
+ "jsonwebtoken",
  "rand",
  "reqwest",
  "serde",
@@ -2237,9 +2238,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "base64",
- "jsonwebtoken",
- "serde",
  "shaku",
  "thiserror",
  "time 0.3.17",
