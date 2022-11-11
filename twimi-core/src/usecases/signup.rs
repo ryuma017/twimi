@@ -33,7 +33,7 @@ impl SignUp for SignUpUseCase {
             .repository
             .insert_user(
                 NewUser::try_from(input.clone())?
-                    .set_password_hash(self.service.compute_password_hash(input.password)?),
+                    .with_password_hash(self.service.compute_password_hash(input.password)?),
             )
             .await?
             .into())

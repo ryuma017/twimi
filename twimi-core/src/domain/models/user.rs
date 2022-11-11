@@ -12,7 +12,7 @@ pub struct NewUser {
 }
 
 impl NewUser {
-    pub fn set_password_hash(mut self, password_hash: String) -> Self {
+    pub fn with_password_hash(mut self, password_hash: String) -> Self {
         self.password_hash = password_hash;
         self
     }
