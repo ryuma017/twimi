@@ -6,10 +6,10 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{
         user::{NewUser, User},
-        ComputeHashError, ValidationError,
+        ValidationError,
     },
     repositories::users::UsersRepository,
-    services::PasswordHasher,
+    services::{PasswordHasher, ComputeHashError},
 };
 
 #[async_trait]

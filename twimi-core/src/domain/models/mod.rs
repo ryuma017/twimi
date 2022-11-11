@@ -8,14 +8,6 @@ use std::marker::PhantomData;
 #[error("Failed to validate: {0}")]
 pub struct ValidationError(String);
 
-#[derive(Debug, thiserror::Error)]
-#[error(transparent)]
-pub struct ComputeHashError(#[from] anyhow::Error);
-
-#[derive(Debug, thiserror::Error)]
-#[error("User not found: {0}")]
-pub struct InvalidCredentials(String);
-
 pub struct Id<T> {
     pub value: i64,
     _marker: PhantomData<T>,
