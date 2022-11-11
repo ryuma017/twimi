@@ -1,5 +1,6 @@
 pub mod models;
 pub mod repositories;
+pub mod services;
 
 use std::str::FromStr;
 
