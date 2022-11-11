@@ -5,7 +5,7 @@ use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
 
-use super::routes::{health_check, signup};
+use super::routes::{health_check, login, signup};
 use crate::infrastructure::{Database, MySqlDatabase};
 use crate::AppModule;
 
@@ -32,6 +32,7 @@ impl ApiServer {
                 .wrap(NormalizePath::default())
                 .route("/health_check", web::get().to(health_check))
                 .route("/signup", web::post().to(signup))
+                .route("/login", web::post().to(login))
                 .app_data(Arc::clone(&module))
         })
         .apply_settings(&settings)

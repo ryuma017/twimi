@@ -2182,7 +2182,9 @@ dependencies = [
  "actix-settings",
  "actix-web",
  "anyhow",
+ "argon2",
  "async-trait",
+ "rand",
  "reqwest",
  "serde",
  "shaku",
@@ -2199,9 +2201,7 @@ name = "twimi-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "argon2",
  "async-trait",
- "rand",
  "shaku",
  "thiserror",
  "time 0.3.17",

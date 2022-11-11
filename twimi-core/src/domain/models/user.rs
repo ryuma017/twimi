@@ -1,7 +1,6 @@
 use time::OffsetDateTime;
 
-use super::{ComputeHashError, Id, ValidationError};
-use argon2::{password_hash::SaltString, Algorithm, Argon2, Params, PasswordHasher, Version};
+use super::{Id, ValidationError};
 use unicode_segmentation::UnicodeSegmentation;
 use validator::validate_email;
 
@@ -9,21 +8,30 @@ pub struct NewUser {
     pub username: Username,
     pub email: Email,
     pub password: Password,
+    pub password_hash: String,
+}
+
+impl NewUser {
+    pub fn with_password_hash(mut self, password_hash: String) -> Self {
+        self.password_hash = password_hash;
+        self
+    }
 }
 
 pub struct User {
     pub id: Id<Self>,
     pub username: Username,
     pub email: Email,
+    pub password_hash: String,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
 }
 
 impl User {
-    pub fn id(&self) -> u64 {
+    pub fn id(&self) -> i64 {
         self.id.value
     }
-    pub fn set_id(mut self, id: u64) -> Self {
+    pub fn with_id(mut self, id: i64) -> Self {
         self.id = id.into();
         self
     }
@@ -64,20 +72,6 @@ impl TryFrom<String> for Password {
             "Password must be between 8 and 50 characters long.",
         )?;
         Ok(Password(value))
-    }
-}
-
-impl Password {
-    pub fn compute_hash(&self) -> Result<String, ComputeHashError> {
-        let salt = SaltString::generate(&mut rand::thread_rng());
-        let hashed = Argon2::new(
-            Algorithm::Argon2id,
-            Version::V0x13,
-            Params::new(15000, 2, 1, None).unwrap(), // params が正しければ panic しない
-        )
-        .hash_password(self.0.as_bytes(), &salt)?
-        .to_string();
-        Ok(hashed)
     }
 }
 

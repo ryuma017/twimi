@@ -9,9 +9,7 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = "1.0.66"
-argon2 = { version = "0.4.1", features = ["std"] }
 async-trait = "0.1.58"
-rand = "0.8.5"
 shaku = "0.6.1"
 thiserror = "1.0.37"
 time = { version = "0.3.17", features = ["serde"] }

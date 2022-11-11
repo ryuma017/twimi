@@ -15,6 +15,7 @@ path = "src/lib.rs"
 actix-settings = "0.6.0"
 actix-web = "4.2.1"
 anyhow = "1.0.66"
+argon2 = { version = "0.4.1", features = ["std"] }
 async-trait = "0.1.58"
 shaku = "0.6.1"
 shaku_actix = "0.2.0"
@@ -26,6 +27,7 @@ sqlx = { version = "0.6.2", default-features = false, features = [
     "offline",
     "time",
 ] }
+rand = "0.8.5"
 tokio = { version = "1.21.2", features = ["rt-multi-thread", "macros"] }
 thiserror = "1.0.37"
 time = { version = "0.3.17", features = ["serde"] }

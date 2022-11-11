@@ -5,7 +5,7 @@ use shaku::Component;
 
 use twimi_core::{
     domain::models::user::{NewUser, User},
-    domain::repositories::users::UsersRepository,
+    domain::{models::user::Username, repositories::users::UsersRepository},
 };
 
 use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::Database};
@@ -37,6 +37,25 @@ impl UsersRepository for UsersRepositoryImpl {
         .await?
         .last_insert_id();
 
-        Ok(kaiin.try_into().map(|user: User| user.set_id(kaiin_id))?)
+        Ok(kaiin
+            .try_into()
+            .map(|user: User| user.with_id(kaiin_id as i64))?)
+    }
+
+    async fn find_user_by_username(
+        &self,
+        username: Username,
+    ) -> Result<Option<User>, anyhow::Error> {
+        let kaiin = sqlx::query_as!(
+            KaiinTable,
+            r#"
+            SELECT * FROM kaiin WHERE adana = ?;
+            "#,
+            username.as_ref()
+        )
+        .fetch_optional(self.database.pool())
+        .await?;
+
+        Ok(kaiin.map(|kaiin| kaiin.try_into()).transpose()?)
     }
 }

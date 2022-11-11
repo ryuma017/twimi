@@ -6,9 +6,10 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{
         user::{NewUser, User},
-        ComputeHashError, ValidationError,
+        ValidationError,
     },
     repositories::users::UsersRepository,
+    services::{ComputeHashError, PasswordHasher},
 };
 
 #[async_trait]
@@ -21,12 +22,21 @@ pub trait SignUp: Interface {
 pub struct SignUpUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
+    #[shaku(inject)]
+    service: Arc<dyn PasswordHasher>,
 }
 
 #[async_trait]
 impl SignUp for SignUpUseCase {
     async fn signup(&self, input: SignUpInput) -> Result<SignUpOutput, SignUpUseCaseError> {
-        Ok(self.repository.insert_user(input.try_into()?).await?.into())
+        Ok(self
+            .repository
+            .insert_user(
+                NewUser::try_from(input.clone())?
+                    .with_password_hash(self.service.compute_password_hash(input.password)?),
+            )
+            .await?
+            .into())
     }
 }
 
@@ -40,6 +50,7 @@ pub enum SignUpUseCaseError {
     UnexpectedError(#[from] ComputeHashError),
 }
 
+#[derive(Clone)]
 pub struct SignUpInput {
     pub username: String,
     pub email: String,
@@ -54,6 +65,7 @@ impl TryFrom<SignUpInput> for NewUser {
             username: value.username.try_into()?,
             email: value.email.try_into()?,
             password: value.password.try_into()?,
+            password_hash: Default::default(),
         })
     }
 }
