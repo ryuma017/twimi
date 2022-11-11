@@ -31,7 +31,7 @@ impl User {
     pub fn id(&self) -> i64 {
         self.id.value
     }
-    pub fn set_id(mut self, id: i64) -> Self {
+    pub fn with_id(mut self, id: i64) -> Self {
         self.id = id.into();
         self
     }

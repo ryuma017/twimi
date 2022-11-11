@@ -9,7 +9,7 @@ use crate::domain::{
         ValidationError,
     },
     repositories::users::UsersRepository,
-    services::{PasswordHasher, ComputeHashError},
+    services::{ComputeHashError, PasswordHasher},
 };
 
 #[async_trait]

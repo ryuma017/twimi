@@ -39,7 +39,7 @@ impl UsersRepository for UsersRepositoryImpl {
 
         Ok(kaiin
             .try_into()
-            .map(|user: User| user.set_id(kaiin_id as i64))?)
+            .map(|user: User| user.with_id(kaiin_id as i64))?)
     }
 
     async fn find_user_by_username(
