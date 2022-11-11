@@ -35,7 +35,7 @@ impl Login for LoginUseCase {
         self.service
             .verify_password_hash(input.password, user.password_hash.clone())?;
 
-        let access_token = "dummy token".into();
+        let access_token = encode_jwt(SELECT_KEY, user.username.as_ref());
 
         Ok(LoginOutput { user, access_token })
     }
@@ -59,4 +59,29 @@ pub struct LoginInput {
 pub struct LoginOutput {
     pub user: User,
     pub access_token: String,
+}
+
+// なぐり書き ---------------
+
+use jsonwebtoken::{encode, EncodingKey};
+use serde::{Deserialize, Serialize};
+
+const SELECT_KEY: &str = "secret";
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Claims {
+    name: String,
+}
+
+fn encode_jwt(secret: &str, username: &str) -> String {
+    let header = jsonwebtoken::Header::default();
+    let claim = Claims {
+        name: username.to_owned(),
+    };
+    encode(
+        &header,
+        &claim,
+        &EncodingKey::from_secret(secret.as_bytes()),
+    )
+    .unwrap()
 }
