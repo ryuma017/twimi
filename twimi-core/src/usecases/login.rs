@@ -5,10 +5,7 @@ use async_trait::async_trait;
 use shaku::{Component, Interface};
 
 use crate::domain::{
-    models::{
-        user::{User, UserCredentials},
-        ValidationError,
-    },
+    models::{user::User, ValidationError},
     repositories::users::UsersRepository,
     services::{InvalidCredentials, PasswordVerifier},
 };
@@ -57,17 +54,6 @@ pub enum LoginUseCaseError {
 pub struct LoginInput {
     pub username: String,
     pub password: String,
-}
-
-impl TryFrom<LoginInput> for UserCredentials {
-    type Error = ValidationError;
-
-    fn try_from(value: LoginInput) -> Result<Self, Self::Error> {
-        Ok(UserCredentials {
-            username: value.username.try_into()?,
-            password: value.password.try_into()?,
-        })
-    }
 }
 
 pub struct LoginOutput {
