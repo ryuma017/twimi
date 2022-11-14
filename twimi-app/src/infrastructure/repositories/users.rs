@@ -26,7 +26,7 @@ impl UsersRepository for UsersRepositoryImpl {
             INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?);
             "#,
-            kaiin.kaiin_id,
+            kaiin.adana,
             kaiin.mail_address,
             kaiin.password,
             kaiin.created_at,
