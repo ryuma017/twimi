@@ -8,10 +8,12 @@ rust-version.workspace = true
 path = "src/lib.rs"
 
 [dependencies]
-anyhow = "1.0.66"
 async-trait = "0.1.58"
 shaku = "0.6.1"
-thiserror = "1.0.37"
-time = { version = "0.3.17", features = ["serde"] }
 unicode-segmentation = "1.10.0"
 validator = "0.16.0"
+
+anyhow.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+time.workspace = true

@@ -1,34 +1,30 @@
-use std::sync::Arc;
-
 use anyhow::Context as _;
-use jsonwebtoken::{encode, EncodingKey};
-use serde::{Deserialize, Serialize};
+use jsonwebtoken::EncodingKey;
 use shaku::Component;
 
-use twimi_core::domain::services::JwtEncoder;
-
-use crate::infrastructure::Secret;
-
-#[derive(Debug, Deserialize, Serialize)]
-struct Claims {
-    name: String,
-}
+use twimi_core::domain::services::{Claims, JwtEncoder};
 
 #[derive(Component)]
 #[shaku(interface = JwtEncoder)]
 pub struct JwtEncoderImpl {
-    #[shaku(inject)]
-    secret: Arc<dyn Secret>,
+    secret: Vec<u8>,
+}
+
+impl JwtEncoderImpl {
+    #[allow(clippy::new_without_default)]
+    pub fn new(secret: String) -> Self {
+        Self {
+            secret: secret.into_bytes(), // String を消費するからゼロコピー
+        }
+    }
 }
 
 impl JwtEncoder for JwtEncoderImpl {
-    fn encode(&self, username: &str) -> Result<String, anyhow::Error> {
-        encode(
+    fn encode(&self, claims: &Claims) -> Result<String, anyhow::Error> {
+        jsonwebtoken::encode(
             &jsonwebtoken::Header::default(),
-            &Claims {
-                name: username.to_owned(),
-            },
-            &EncodingKey::from_secret(self.secret.get_secret().as_bytes()),
+            claims,
+            &EncodingKey::from_secret(&self.secret[..]),
         )
         .context("Failed to encode JWT.")
     }

@@ -1,5 +1,5 @@
 mod jwt;
 mod password;
 
-pub use jwt::JwtEncoder;
-pub use password::{ComputeHashError, InvalidCredentials, PasswordHasher, PasswordVerifier};
+pub use jwt::{Claims, JwtEncoder};
+pub use password::{ComputeHashError, InvalidPassword, PasswordHasher, PasswordVerifier};

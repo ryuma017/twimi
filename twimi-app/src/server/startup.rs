@@ -4,9 +4,10 @@ use actix_settings::{ApplySettings as _, Settings};
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
+use twimi_core::domain::services::JwtEncoder;
 
 use super::routes::{health_check, login, signup};
-use crate::infrastructure::{Database, JwtSecret, MySqlDatabase, Secret};
+use crate::infrastructure::services::{Database, JwtEncoderImpl, MySqlDatabase};
 use crate::AppModule;
 
 pub struct ApiServer {
@@ -21,13 +22,7 @@ impl ApiServer {
         let settings =
             Settings::parse_toml(config_file).expect("Failed to parse settings from toml file.");
         let port = settings.actix.hosts[0].port;
-        let module = Arc::new(
-            AppModule::builder()
-                .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
-                .with_component_override::<dyn Secret>(Box::new(JwtSecret::new()))
-                .build(),
-        );
-
+        let module = Arc::new(build_module());
         let server = HttpServer::new(move || {
             App::new()
                 .wrap(NormalizePath::default())
@@ -49,4 +44,13 @@ impl ApiServer {
     pub fn port(&self) -> u16 {
         self.port
     }
+}
+
+fn build_module() -> AppModule {
+    AppModule::builder()
+        .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
+        .with_component_override::<dyn JwtEncoder>(Box::new(JwtEncoderImpl::new(
+            std::env::var("JWT_SECRET").unwrap(),
+        )))
+        .build()
 }

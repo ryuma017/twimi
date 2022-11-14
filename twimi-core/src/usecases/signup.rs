@@ -23,7 +23,7 @@ pub struct SignUpUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
     #[shaku(inject)]
-    service: Arc<dyn PasswordHasher>,
+    password_service: Arc<dyn PasswordHasher>,
 }
 
 #[async_trait]
@@ -32,8 +32,10 @@ impl SignUp for SignUpUseCase {
         Ok(self
             .repository
             .insert_user(
-                NewUser::try_from(input.clone())?
-                    .with_password_hash(self.service.compute_password_hash(input.password)?),
+                NewUser::try_from(input.clone())?.with_password_hash(
+                    self.password_service
+                        .compute_password_hash(input.password)?,
+                ),
             )
             .await?
             .into())

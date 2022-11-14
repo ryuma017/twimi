@@ -7,7 +7,7 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{user::User, ValidationError},
     repositories::users::UsersRepository,
-    services::{InvalidCredentials, JwtEncoder, PasswordVerifier},
+    services::{InvalidPassword, JwtEncoder, PasswordVerifier},
 };
 
 #[async_trait]
@@ -35,11 +35,11 @@ impl Login for LoginUseCase {
             .await?
             .context("User not Found.")?;
         self.password_service
-            .verify_password_hash(input.password, user.password_hash.clone())?;
+            .verify_password_hash(input.password.as_str(), user.password_hash.as_str())?;
 
-        let access_token = self.jwt_service.encode(user.username.as_ref())?;
+        let access_token = self.jwt_service.encode(&(&user).into())?;
 
-        Ok(LoginOutput { user, access_token })
+        Ok((user, access_token).into())
     }
 }
 
@@ -50,7 +50,7 @@ pub enum LoginUseCaseError {
     #[error(transparent)]
     ValidationError(#[from] ValidationError),
     #[error(transparent)]
-    InvalidCredentials(#[from] InvalidCredentials),
+    InvalidPassword(#[from] InvalidPassword),
 }
 
 pub struct LoginInput {
@@ -61,4 +61,13 @@ pub struct LoginInput {
 pub struct LoginOutput {
     pub user: User,
     pub access_token: String,
+}
+
+impl From<(User, String)> for LoginOutput {
+    fn from(value: (User, String)) -> Self {
+        Self {
+            user: value.0,
+            access_token: value.1,
+        }
+    }
 }

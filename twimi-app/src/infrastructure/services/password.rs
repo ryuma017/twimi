@@ -4,7 +4,7 @@ use argon2::{
     PasswordVerifier as _, Version,
 };
 use shaku::Component;
-use twimi_core::domain::services::{InvalidCredentials, PasswordHasher, PasswordVerifier};
+use twimi_core::domain::services::{InvalidPassword, PasswordHasher, PasswordVerifier};
 
 #[derive(Component, Clone, Copy)]
 #[shaku(interface = PasswordHasher)]
@@ -31,10 +31,10 @@ pub struct Argon2PasswordVerifier;
 impl PasswordVerifier for Argon2PasswordVerifier {
     fn verify_password_hash(
         &self,
-        password_candidate: String,
-        expected_password_hash: String,
-    ) -> Result<(), InvalidCredentials> {
-        let expected = PasswordHash::new(&expected_password_hash)
+        password_candidate: &str,
+        expected_password_hash: &str,
+    ) -> Result<(), InvalidPassword> {
+        let expected = PasswordHash::new(expected_password_hash)
             .context("Failed to parse hash in PHC string format.")?;
         Argon2::default()
             .verify_password(password_candidate.as_bytes(), &expected)
