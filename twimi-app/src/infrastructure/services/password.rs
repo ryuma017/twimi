@@ -11,7 +11,7 @@ use twimi_core::domain::services::{InvalidPassword, PasswordHasher, PasswordVeri
 pub struct Argon2PasswordHasher;
 
 impl PasswordHasher for Argon2PasswordHasher {
-    fn compute_password_hash(&self, password: String) -> Result<String, anyhow::Error> {
+    fn compute_password_hash(&self, password: &str) -> Result<String, anyhow::Error> {
         let salt = SaltString::generate(&mut rand::thread_rng());
         let hashed = Argon2::new(
             Algorithm::Argon2id,
@@ -29,7 +29,7 @@ impl PasswordHasher for Argon2PasswordHasher {
 pub struct Argon2PasswordVerifier;
 
 impl PasswordVerifier for Argon2PasswordVerifier {
-    fn verify_password_hash(
+    fn verify_password(
         &self,
         password_candidate: &str,
         expected_password_hash: &str,

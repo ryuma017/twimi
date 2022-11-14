@@ -21,9 +21,9 @@ pub struct LoginUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
     #[shaku(inject)]
-    password_service: Arc<dyn PasswordVerifier>,
+    password_verifier: Arc<dyn PasswordVerifier>,
     #[shaku(inject)]
-    jwt_service: Arc<dyn JwtEncoder>,
+    jwt_encoder: Arc<dyn JwtEncoder>,
 }
 
 #[async_trait]
@@ -34,10 +34,10 @@ impl Login for LoginUseCase {
             .find_user_by_username(input.username.try_into()?)
             .await?
             .context("User not Found.")?;
-        self.password_service
-            .verify_password_hash(input.password.as_str(), user.password_hash.as_str())?;
+        self.password_verifier
+            .verify_password(input.password.as_str(), user.password_hash.as_str())?;
 
-        let access_token = self.jwt_service.encode(&(&user).into())?;
+        let access_token = self.jwt_encoder.encode(&(&user).into())?;
 
         Ok((user, access_token).into())
     }
@@ -64,10 +64,7 @@ pub struct LoginOutput {
 }
 
 impl From<(User, String)> for LoginOutput {
-    fn from(value: (User, String)) -> Self {
-        Self {
-            user: value.0,
-            access_token: value.1,
-        }
+    fn from((user, access_token): (User, String)) -> Self {
+        Self { user, access_token }
     }
 }

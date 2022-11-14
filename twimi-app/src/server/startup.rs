@@ -48,9 +48,13 @@ impl ApiServer {
 
 fn build_module() -> AppModule {
     AppModule::builder()
-        .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
+        .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new(
+            std::env::var("DATABASE_URL")
+                .expect("`DATABASE_URL` must be set.")
+                .as_str(),
+        )))
         .with_component_override::<dyn JwtEncoder>(Box::new(JwtEncoderImpl::new(
-            std::env::var("SECRET_KEY").unwrap(),
+            std::env::var("SECRET_KEY").unwrap().as_str(),
         )))
         .build()
 }

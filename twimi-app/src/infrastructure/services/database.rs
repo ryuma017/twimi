@@ -15,25 +15,14 @@ pub struct MySqlDatabase {
 }
 
 impl MySqlDatabase {
-    pub fn new() -> Self {
-        let options = MySqlConnectOptions::from_str(
-            std::env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set.")
-                .as_str(),
-        )
-        .unwrap();
+    pub fn new(url: &str) -> Self {
+        let options = MySqlConnectOptions::from_str(url).unwrap();
 
         let pool = MySqlPoolOptions::new()
             .max_connections(5)
             .connect_lazy_with(options);
 
         Self { pool }
-    }
-}
-
-impl Default for MySqlDatabase {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

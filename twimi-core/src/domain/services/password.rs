@@ -5,7 +5,7 @@ use shaku::Interface;
 pub struct ComputeHashError(#[from] anyhow::Error);
 
 pub trait PasswordHasher: Interface {
-    fn compute_password_hash(&self, password: String) -> Result<String, anyhow::Error>;
+    fn compute_password_hash(&self, password: &str) -> Result<String, anyhow::Error>;
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -13,7 +13,7 @@ pub trait PasswordHasher: Interface {
 pub struct InvalidPassword(#[from] anyhow::Error);
 
 pub trait PasswordVerifier: Interface {
-    fn verify_password_hash(
+    fn verify_password(
         &self,
         password_candidate: &str,
         expected_password_hash: &str,
