@@ -11,10 +11,9 @@ pub struct JwtEncoderImpl {
 }
 
 impl JwtEncoderImpl {
-    #[allow(clippy::new_without_default)]
     pub fn new(secret: String) -> Self {
         Self {
-            secret: secret.into_bytes(), // String を消費するからゼロコピー
+            secret: secret.into_bytes(),
         }
     }
 }

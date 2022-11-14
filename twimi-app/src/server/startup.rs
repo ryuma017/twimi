@@ -50,7 +50,7 @@ fn build_module() -> AppModule {
     AppModule::builder()
         .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
         .with_component_override::<dyn JwtEncoder>(Box::new(JwtEncoderImpl::new(
-            std::env::var("JWT_SECRET").unwrap(),
+            std::env::var("SECRET_KEY").unwrap(),
         )))
         .build()
 }
