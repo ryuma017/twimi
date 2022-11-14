@@ -59,6 +59,12 @@ impl AsRef<str> for Username {
     }
 }
 
+impl ToString for Username {
+    fn to_string(&self) -> String {
+        self.0.to_string()
+    }
+}
+
 #[derive(Debug)]
 pub struct Password(String);
 

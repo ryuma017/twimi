@@ -11,7 +11,7 @@ pub struct Claims {
 impl From<&User> for Claims {
     fn from(user: &User) -> Self {
         Self {
-            name: user.username.as_ref().to_owned(),
+            name: user.username.to_string(),
         }
     }
 }
