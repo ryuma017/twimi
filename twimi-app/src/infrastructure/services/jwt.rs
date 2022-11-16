@@ -10,14 +10,6 @@ pub struct JwtEncoderImpl {
     secret: Vec<u8>,
 }
 
-impl JwtEncoderImpl {
-    pub fn new(secret: &str) -> Self {
-        Self {
-            secret: secret.into(),
-        }
-    }
-}
-
 impl JwtEncoder for JwtEncoderImpl {
     fn encode(&self, claims: &Claims) -> Result<String, anyhow::Error> {
         jsonwebtoken::encode(
@@ -28,5 +20,3 @@ impl JwtEncoder for JwtEncoderImpl {
         .context("Failed to encode JWT.")
     }
 }
-
-// JwtEncoderImplParameters: 上の macro で生成される型. これを使ってどういか.

@@ -4,10 +4,11 @@ use actix_settings::{ApplySettings as _, Settings};
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
-use twimi_core::domain::services::JwtEncoder;
 
 use super::routes::{health_check, login, signup};
-use crate::infrastructure::services::{Database, JwtEncoderImpl, MySqlDatabase};
+use crate::infrastructure::services::{
+    Database, JwtEncoderImpl, JwtEncoderImplParameters, MySqlDatabase,
+};
 use crate::AppModule;
 
 pub struct ApiServer {
@@ -53,8 +54,10 @@ fn build_module() -> AppModule {
                 .expect("`DATABASE_URL` must be set.")
                 .as_str(),
         )))
-        .with_component_override::<dyn JwtEncoder>(Box::new(JwtEncoderImpl::new(
-            std::env::var("SECRET_KEY").unwrap().as_str(),
-        )))
+        .with_component_parameters::<JwtEncoderImpl>(JwtEncoderImplParameters {
+            secret: std::env::var("SECRET_KEY")
+                .expect("`SECRET_KEY` must be set.")
+                .into_bytes(),
+        })
         .build()
 }
