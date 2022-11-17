@@ -8,7 +8,7 @@ use twimi_core::{
     domain::{models::user::Username, repositories::users::UsersRepository},
 };
 
-use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::Database};
+use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::services::Database};
 
 #[derive(Component)]
 #[shaku(interface = UsersRepository)]
@@ -21,8 +21,7 @@ pub struct UsersRepositoryImpl {
 impl UsersRepository for UsersRepositoryImpl {
     async fn insert_user(&self, new_user: NewUser) -> Result<User, anyhow::Error> {
         let kaiin: KaiinTable = new_user.try_into()?;
-        let kaiin_id = sqlx::query_as!(
-            KaiinTable,
+        let kaiin_id = sqlx::query!(
             r#"
             INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?);
@@ -49,7 +48,7 @@ impl UsersRepository for UsersRepositoryImpl {
         let kaiin = sqlx::query_as!(
             KaiinTable,
             r#"
-            SELECT * FROM kaiin WHERE adana = ?;
+            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at FROM kaiin WHERE adana = ?;
             "#,
             username.as_ref()
         )

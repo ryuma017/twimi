@@ -6,7 +6,9 @@ use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
 
 use super::routes::{health_check, login, signup};
-use crate::infrastructure::{Database, MySqlDatabase};
+use crate::infrastructure::services::{
+    Database, JwtEncoderImpl, JwtEncoderImplParameters, MySqlDatabase,
+};
 use crate::AppModule;
 
 pub struct ApiServer {
@@ -21,12 +23,7 @@ impl ApiServer {
         let settings =
             Settings::parse_toml(config_file).expect("Failed to parse settings from toml file.");
         let port = settings.actix.hosts[0].port;
-        let module = Arc::new(
-            AppModule::builder()
-                .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new()))
-                .build(),
-        );
-
+        let module = Arc::new(build_module());
         let server = HttpServer::new(move || {
             App::new()
                 .wrap(NormalizePath::default())
@@ -48,4 +45,19 @@ impl ApiServer {
     pub fn port(&self) -> u16 {
         self.port
     }
+}
+
+fn build_module() -> AppModule {
+    AppModule::builder()
+        .with_component_override::<dyn Database>(Box::new(MySqlDatabase::new(
+            std::env::var("DATABASE_URL")
+                .expect("`DATABASE_URL` must be set.")
+                .as_str(),
+        )))
+        .with_component_parameters::<JwtEncoderImpl>(JwtEncoderImplParameters {
+            secret: std::env::var("SECRET_KEY")
+                .expect("`SECRET_KEY` must be set.")
+                .into_bytes(),
+        })
+        .build()
 }

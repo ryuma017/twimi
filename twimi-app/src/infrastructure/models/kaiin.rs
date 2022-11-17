@@ -9,7 +9,7 @@ pub struct KaiinTable {
     pub kaiin_id: i64,
     pub adana: String,
     pub mail_address: String,
-    pub password: String, // hashed
+    pub password: String,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
 }

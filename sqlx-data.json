@@ -10,7 +10,7 @@
     },
     "query": "\n            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?);\n            "
   },
-  "75558a2410f239023ae1cbf0a2e7b632565560bc178c0e6ff1f10dde6a67ee61": {
+  "7427a8f8e3fa4d872983aaf9d4b018e7454ba6c21b18d2fceb8dd13500feb878": {
     "describe": {
       "columns": [
         {
@@ -98,6 +98,6 @@
         "Right": 1
       }
     },
-    "query": "\n            SELECT * FROM kaiin WHERE adana = ?;\n            "
+    "query": "\n            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at FROM kaiin WHERE adana = ?;\n            "
   }
 }
