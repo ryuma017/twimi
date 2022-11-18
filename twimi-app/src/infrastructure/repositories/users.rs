@@ -1,11 +1,15 @@
 use std::sync::Arc;
 
+use anyhow::Context as _;
 use async_trait::async_trait;
 use shaku::Component;
 
 use twimi_core::{
     domain::models::user::{NewUser, User},
-    domain::{models::user::Username, repositories::users::UsersRepository},
+    domain::{
+        models::user::Username,
+        repositories::users::{InsertionError, UsersRepository},
+    },
 };
 
 use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::services::Database};
@@ -19,7 +23,7 @@ pub struct UsersRepositoryImpl {
 
 #[async_trait]
 impl UsersRepository for UsersRepositoryImpl {
-    async fn insert_user(&self, new_user: NewUser) -> Result<User, anyhow::Error> {
+    async fn insert_user(&self, new_user: NewUser) -> Result<User, InsertionError> {
         let kaiin: KaiinTable = new_user.try_into()?;
         let kaiin_id = sqlx::query!(
             r#"
@@ -33,7 +37,8 @@ impl UsersRepository for UsersRepositoryImpl {
             kaiin.updated_at
         )
         .execute(self.database.pool())
-        .await?
+        .await
+        .context("username or email is already taken.")?
         .last_insert_id();
 
         Ok(kaiin

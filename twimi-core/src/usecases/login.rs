@@ -7,7 +7,7 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{user::User, ValidationError},
     repositories::users::UsersRepository,
-    services::{InvalidPassword, JwtEncoder, PasswordVerifier},
+    services::{JwtEncoder, PasswordService, VerificationError},
 };
 
 #[async_trait]
@@ -21,7 +21,7 @@ pub struct LoginUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
     #[shaku(inject)]
-    password_verifier: Arc<dyn PasswordVerifier>,
+    password_verifier: Arc<dyn PasswordService>,
     #[shaku(inject)]
     jwt_encoder: Arc<dyn JwtEncoder>,
 }
@@ -50,7 +50,7 @@ pub enum LoginUseCaseError {
     #[error(transparent)]
     ValidationError(#[from] ValidationError),
     #[error(transparent)]
-    InvalidPassword(#[from] InvalidPassword),
+    VerificationError(#[from] VerificationError),
 }
 
 pub struct LoginInput {

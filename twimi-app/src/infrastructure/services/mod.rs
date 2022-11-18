@@ -4,4 +4,4 @@ mod password;
 
 pub use database::{Database, MySqlDatabase};
 pub use jwt::{JwtEncoderImpl, JwtEncoderImplParameters};
-pub use password::{Argon2PasswordHasher, Argon2PasswordVerifier};
+pub use password::Argon2PasswordHash;
