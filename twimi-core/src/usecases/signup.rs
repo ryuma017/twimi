@@ -8,8 +8,8 @@ use crate::domain::{
         user::{NewUser, User},
         ValidationError,
     },
-    repositories::users::UsersRepository,
-    services::{ComputeHashError, PasswordHasher},
+    repositories::users::{InsertionError, UsersRepository},
+    services::{ComputeHashError, PasswordService},
 };
 
 #[async_trait]
@@ -23,7 +23,7 @@ pub struct SignUpUseCase {
     #[shaku(inject)]
     repository: Arc<dyn UsersRepository>,
     #[shaku(inject)]
-    password_hasher: Arc<dyn PasswordHasher>,
+    password_hasher: Arc<dyn PasswordService>,
 }
 
 #[async_trait]
@@ -45,7 +45,7 @@ impl SignUp for SignUpUseCase {
 #[derive(thiserror::Error, Debug)]
 pub enum SignUpUseCaseError {
     #[error(transparent)]
-    DatabaseError(#[from] anyhow::Error),
+    DatabaseError(#[from] InsertionError),
     #[error(transparent)]
     ValidationError(#[from] ValidationError),
     #[error(transparent)]

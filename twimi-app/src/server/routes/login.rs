@@ -25,7 +25,7 @@ impl ResponseError for LoginError {
         match self.0 {
             LoginUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             LoginUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
-            LoginUseCaseError::InvalidPassword(_) => StatusCode::UNAUTHORIZED,
+            LoginUseCaseError::VerificationError(_) => StatusCode::UNAUTHORIZED,
         }
     }
 }
