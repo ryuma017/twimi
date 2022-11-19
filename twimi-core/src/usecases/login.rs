@@ -7,7 +7,7 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{user::User, ValidationError},
     repositories::users::UsersRepository,
-    services::{JwtEncoder, JwtService, PasswordService, VerificationError},
+    services::{JwtService, PasswordService, VerificationError},
 };
 
 #[async_trait]
