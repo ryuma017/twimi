@@ -4,10 +4,12 @@ use actix_settings::{ApplySettings as _, Settings};
 use actix_web::dev::Server;
 use actix_web::middleware::NormalizePath;
 use actix_web::{web, App, HttpServer};
+use actix_web_lab::middleware::from_fn;
 
-use super::routes::{health_check, login, signup};
+use super::middleware::reject_unauthenticated_user;
+use super::routes::{get_authenticated_user, health_check, login, signup};
 use crate::infrastructure::services::{
-    Database, JwtEncoderImpl, JwtEncoderImplParameters, MySqlDatabase,
+    Database, JwtServiceImpl, JwtServiceImplParameters, MySqlDatabase,
 };
 use crate::AppModule;
 
@@ -30,6 +32,11 @@ impl ApiServer {
                 .route("/health_check", web::get().to(health_check))
                 .route("/signup", web::post().to(signup))
                 .route("/login", web::post().to(login))
+                .service(
+                    web::resource("/user")
+                        .wrap(from_fn(reject_unauthenticated_user))
+                        .route(web::get().to(get_authenticated_user)),
+                )
                 .app_data(Arc::clone(&module))
         })
         .apply_settings(&settings)
@@ -54,7 +61,7 @@ fn build_module() -> AppModule {
                 .expect("`DATABASE_URL` must be set.")
                 .as_str(),
         )))
-        .with_component_parameters::<JwtEncoderImpl>(JwtEncoderImplParameters {
+        .with_component_parameters::<JwtServiceImpl>(JwtServiceImplParameters {
             secret: std::env::var("SECRET_KEY")
                 .expect("`SECRET_KEY` must be set.")
                 .into_bytes(),
