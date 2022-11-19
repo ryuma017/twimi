@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use serde::Serialize;
 use time::OffsetDateTime;
 
@@ -21,5 +23,22 @@ impl<'a> From<&'a domain::models::User> for User<'a> {
             created_at: &value.created_at,
             updated_at: &value.updated_at,
         }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Username(String);
+
+impl From<String> for Username {
+    fn from(value: String) -> Self {
+        Self(value)
+    }
+}
+
+impl Deref for Username {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }

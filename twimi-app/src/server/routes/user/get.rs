@@ -1,5 +1,9 @@
-use actix_web::HttpResponse;
+use std::ops::Deref;
 
-pub async fn get_authenticated_user() -> HttpResponse {
-    HttpResponse::Ok().finish()
+use actix_web::{web::ReqData, HttpResponse};
+
+use crate::server::models::Username;
+
+pub async fn get_authenticated_user(username: ReqData<Username>) -> HttpResponse {
+    HttpResponse::Ok().body(format!("Hello, {}!", username.into_inner().deref()))
 }
