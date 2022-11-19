@@ -32,22 +32,3 @@ impl JwtDecoder for JwtServiceImpl {
         .map(|data| data.claims.name)
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::JwtServiceImpl;
-//     use twimi_core::domain::services::{Claims, JwtEncoder};
-
-//     #[test]
-//     fn encode() {
-//         let encoded = JwtServiceImpl {
-//             secret: "secret".as_bytes().to_vec(),
-//         }
-//         .encode(&Claims {
-//             e
-//             name: "ryuma".to_string(),
-//         })
-//         .unwrap();
-//         println!("encoded: {}", encoded);
-//     }
-// }
