@@ -7,7 +7,7 @@ use shaku::{Component, Interface};
 use crate::domain::{
     models::{user::User, ValidationError},
     repositories::users::UsersRepository,
-    services::{JwtEncoder, PasswordService, VerificationError},
+    services::{JwtEncoder, JwtService, PasswordService, VerificationError},
 };
 
 #[async_trait]
@@ -23,7 +23,7 @@ pub struct LoginUseCase {
     #[shaku(inject)]
     password_verifier: Arc<dyn PasswordService>,
     #[shaku(inject)]
-    jwt_encoder: Arc<dyn JwtEncoder>,
+    jwt_encoder: Arc<dyn JwtService>,
 }
 
 #[async_trait]
