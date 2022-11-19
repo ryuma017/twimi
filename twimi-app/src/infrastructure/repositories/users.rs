@@ -12,7 +12,7 @@ use twimi_core::{
     },
 };
 
-use crate::{infrastructure::models::kaiin::KaiinTable, infrastructure::services::Database};
+use crate::{infrastructure::models::users::UserRecord, infrastructure::services::Database};
 
 #[derive(Component)]
 #[shaku(interface = UsersRepository)]
@@ -24,42 +24,42 @@ pub struct UsersRepositoryImpl {
 #[async_trait]
 impl UsersRepository for UsersRepositoryImpl {
     async fn insert_user(&self, new_user: NewUser) -> Result<User, InsertionError> {
-        let kaiin: KaiinTable = new_user.try_into()?;
-        let kaiin_id = sqlx::query!(
+        let user: UserRecord = new_user.try_into()?;
+        let user_id = sqlx::query!(
             r#"
-            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)
+            INSERT INTO users (username, email, password_hash, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?);
             "#,
-            kaiin.adana,
-            kaiin.mail_address,
-            kaiin.password,
-            kaiin.created_at,
-            kaiin.updated_at
+            user.username,
+            user.email,
+            user.password_hash,
+            user.created_at,
+            user.updated_at
         )
         .execute(self.database.pool())
         .await
         .context("username or email is already taken.")?
         .last_insert_id();
 
-        Ok(kaiin
+        Ok(user
             .try_into()
-            .map(|user: User| user.with_id(kaiin_id as i64))?)
+            .map(|user: User| user.with_id(user_id as i64))?)
     }
 
     async fn find_user_by_username(
         &self,
         username: Username,
     ) -> Result<Option<User>, anyhow::Error> {
-        let kaiin = sqlx::query_as!(
-            KaiinTable,
+        sqlx::query_as!(
+            UserRecord,
             r#"
-            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at FROM kaiin WHERE adana = ?;
+            SELECT * FROM users WHERE username = ?;
             "#,
             username.as_ref()
         )
         .fetch_optional(self.database.pool())
-        .await?;
-
-        Ok(kaiin.map(|kaiin| kaiin.try_into()).transpose()?)
+        .await?
+        .map(|user| user.try_into())
+        .transpose()
     }
 }
