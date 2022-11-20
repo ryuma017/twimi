@@ -23,10 +23,9 @@ pub struct SignUpError(#[from] SignUpUseCaseError);
 impl ResponseError for SignUpError {
     fn status_code(&self) -> StatusCode {
         match self.0 {
-            SignUpUseCaseError::DatabaseError(_) | SignUpUseCaseError::UnexpectedError(_) => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
             SignUpUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
+            SignUpUseCaseError::DatabaseError(_) => StatusCode::CONFLICT,
+            SignUpUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
