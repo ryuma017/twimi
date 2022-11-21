@@ -13,21 +13,7 @@ pub async fn signup(
     Ok(usecase
         .signup(json.into_inner().into())
         .await
-        .map(|v| HttpResponse::Ok().json(SignUpResponse::from(&v)))?)
-}
-
-#[derive(Debug, thiserror::Error)]
-#[error(transparent)]
-pub struct SignUpError(#[from] SignUpUseCaseError);
-
-impl ResponseError for SignUpError {
-    fn status_code(&self) -> StatusCode {
-        match self.0 {
-            SignUpUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
-            SignUpUseCaseError::DatabaseError(_) => StatusCode::CONFLICT,
-            SignUpUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-        }
-    }
+        .map(|output| HttpResponse::Ok().json(SignUpResponse::from(&output)))?)
 }
 
 #[derive(Debug, Deserialize)]
@@ -52,5 +38,19 @@ type SignUpResponse<'a> = User<'a>;
 impl<'a> From<&'a SignUpOutput> for SignUpResponse<'a> {
     fn from(value: &'a SignUpOutput) -> Self {
         User::from(&value.user)
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct SignUpError(#[from] SignUpUseCaseError);
+
+impl ResponseError for SignUpError {
+    fn status_code(&self) -> StatusCode {
+        match self.0 {
+            SignUpUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
+            SignUpUseCaseError::DatabaseError(_) => StatusCode::CONFLICT,
+            SignUpUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 }

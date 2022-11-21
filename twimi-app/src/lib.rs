@@ -11,6 +11,7 @@ use infrastructure::{
 
 use twimi_core::usecases::{
     health_check::HealthCheckUseCase, login::LoginUseCase, signup::SignUpUseCase,
+    user::get::GetAuthnUserUseCase,
 };
 
 module! {
@@ -19,11 +20,12 @@ module! {
             MySqlDatabase,
             HealthCheckRepositoryImpl,
             UsersRepositoryImpl,
+            Argon2PasswordHash,
+            JwtServiceImpl,
             HealthCheckUseCase,
             SignUpUseCase,
             LoginUseCase,
-            Argon2PasswordHash,
-            JwtServiceImpl,
+            GetAuthnUserUseCase,
         ],
         providers = []
     }
