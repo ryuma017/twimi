@@ -1,7 +1,7 @@
 use sqlx::FromRow;
 use time::OffsetDateTime;
 
-use twimi_core::domain::models::user::{NewUser, User};
+use twimi_core::domain::models::user::{Hashed, NewUser, User};
 
 #[allow(unused)]
 #[derive(FromRow)]
@@ -14,33 +14,35 @@ pub struct UserRecord {
     pub updated_at: OffsetDateTime,
 }
 
-impl TryFrom<UserRecord> for User {
-    type Error = anyhow::Error;
-
-    fn try_from(value: UserRecord) -> Result<Self, Self::Error> {
-        Ok(User {
-            id: Default::default(),
-            username: value.username.try_into()?,
-            email: value.email.try_into()?,
-            password_hash: value.password_hash,
-            created_at: value.created_at,
-            updated_at: value.updated_at,
-        })
+impl UserRecord {
+    pub fn set_id(&mut self, id: i64) {
+        self.user_id = id;
     }
 }
 
-impl TryFrom<NewUser> for UserRecord {
-    type Error = anyhow::Error;
+impl From<UserRecord> for User {
+    fn from(value: UserRecord) -> Self {
+        User {
+            id: value.user_id.into(),
+            username: value.username.try_into().unwrap(),
+            email: value.email.try_into().unwrap(),
+            password_hash: value.password_hash.into(),
+            created_at: value.created_at,
+            updated_at: value.updated_at,
+        }
+    }
+}
 
-    fn try_from(value: NewUser) -> Result<Self, Self::Error> {
+impl From<NewUser<Hashed>> for UserRecord {
+    fn from(value: NewUser<Hashed>) -> Self {
         let timestamp = OffsetDateTime::now_utc();
-        Ok(UserRecord {
+        Self {
             user_id: Default::default(),
-            username: value.username.as_ref().to_owned(),
-            email: value.email.as_ref().to_owned(),
-            password_hash: value.password_hash,
+            username: value.username.into(),
+            email: value.email.into(),
+            password_hash: value.password.into(),
             created_at: timestamp,
             updated_at: timestamp,
-        })
+        }
     }
 }

@@ -9,8 +9,14 @@ use std::marker::PhantomData;
 pub struct ValidationError(String);
 
 pub struct Id<T> {
-    pub value: i64,
+    value: i64,
     _marker: PhantomData<T>,
+}
+
+impl<T> Id<T> {
+    pub fn value(&self) -> i64 {
+        self.value
+    }
 }
 
 impl<T> From<i64> for Id<T> {

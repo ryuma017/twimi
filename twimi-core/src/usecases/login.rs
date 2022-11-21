@@ -35,7 +35,7 @@ impl Login for LoginUseCase {
             .await?
             .context("User not Found.")?;
         self.password_verifier
-            .verify_password(input.password.as_str(), user.password_hash.as_str())?;
+            .verify_password(input.password.as_str(), user.password_hash.as_ref())?;
 
         let access_token = self.jwt_encoder.encode(&(&user).into())?;
 

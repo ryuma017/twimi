@@ -5,7 +5,7 @@ use shaku::{Component, Interface};
 
 use crate::domain::{
     models::{
-        user::{NewUser, User},
+        user::{NewUser, Plain, User},
         ValidationError,
     },
     repositories::users::{InsertionError, UsersRepository},
@@ -59,7 +59,7 @@ pub struct SignUpInput {
     pub password: String,
 }
 
-impl TryFrom<SignUpInput> for NewUser {
+impl TryFrom<SignUpInput> for NewUser<Plain> {
     type Error = ValidationError;
 
     fn try_from(value: SignUpInput) -> Result<Self, Self::Error> {
@@ -67,7 +67,6 @@ impl TryFrom<SignUpInput> for NewUser {
             username: value.username.try_into()?,
             email: value.email.try_into()?,
             password: value.password.try_into()?,
-            password_hash: Default::default(),
         })
     }
 }

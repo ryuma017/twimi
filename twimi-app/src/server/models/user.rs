@@ -17,7 +17,7 @@ pub struct User<'a> {
 impl<'a> From<&'a domain::models::User> for User<'a> {
     fn from(value: &'a domain::models::User) -> Self {
         Self {
-            id: value.id(),
+            id: value.id.value(),
             username: value.username.as_ref(),
             email: value.email.as_ref(),
             created_at: &value.created_at,
