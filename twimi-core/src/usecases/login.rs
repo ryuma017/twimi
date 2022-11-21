@@ -1,13 +1,16 @@
 use std::sync::Arc;
 
-use anyhow::Context;
+use anyhow::Context as _;
 use async_trait::async_trait;
 use shaku::{Component, Interface};
 
 use crate::domain::{
-    models::{user::User, ValidationError},
+    models::{User, ValidationError},
     repositories::users::UsersRepository,
-    services::{JwtService, PasswordService, VerificationError},
+    services::{
+        jwt::JwtService,
+        password::{PasswordService, VerificationError},
+    },
 };
 
 #[async_trait]
@@ -35,7 +38,7 @@ impl Login for LoginUseCase {
             .await?
             .context("User not Found.")?;
         self.password_verifier
-            .verify_password(input.password.as_str(), user.password_hash.as_str())?;
+            .verify_password(input.password.as_str(), user.password_hash.as_ref())?;
 
         let access_token = self.jwt_encoder.encode(&(&user).into())?;
 

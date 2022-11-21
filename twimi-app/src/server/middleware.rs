@@ -12,12 +12,12 @@ use actix_web::{
 use actix_web_lab::middleware::Next;
 use shaku::HasComponent;
 
-use twimi_core::domain::services::JwtService;
+use twimi_core::domain::services::jwt::JwtService;
 
-use crate::{server::models::Username, AppModule};
+use crate::{server::models, AppModule};
 
 #[derive(Debug, thiserror::Error)]
-pub enum AuthenticationError {
+enum AuthenticationError {
     #[error("Missing `Authorization` header.")]
     MissingAuthorizationHeader,
     #[error("Invalid authorization scheme.")]
@@ -56,7 +56,7 @@ pub async fn reject_unauthenticated_user<B: MessageBody>(
             )
         })?;
     let jwt_service: &dyn JwtService = request.app_data::<Arc<AppModule>>().unwrap().resolve_ref();
-    let username: Username = jwt_service
+    let username: models::Username = jwt_service
         .decode(jwt)
         .map(|username| username.into())
         .map_err(|e| Unauthorized(e, "Invalid token."))?;

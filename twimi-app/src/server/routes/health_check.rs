@@ -1,7 +1,8 @@
 use actix_web::{HttpResponse, ResponseError};
 
-use super::Inject;
 use twimi_core::usecases::health_check::{HealthCheck, HealthCheckUseCaseError};
+
+use super::Inject;
 
 pub async fn health_check(
     usecase: Inject<dyn HealthCheck>,

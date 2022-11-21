@@ -1,20 +1,10 @@
 {
   "db": "MySQL",
-  "268ef796170ec1d2693bac4f5dd4f1d767045b314433d3f821e773e57800df8d": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Right": 5
-      }
-    },
-    "query": "\n            INSERT INTO kaiin (adana, mail_address, password, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?);\n            "
-  },
-  "7427a8f8e3fa4d872983aaf9d4b018e7454ba6c21b18d2fceb8dd13500feb878": {
+  "234f046acd24d13d11f06354033d5b3631ba99b5c91d09a9d3831519e20c49f7": {
     "describe": {
       "columns": [
         {
-          "name": "kaiin_id",
+          "name": "user_id",
           "ordinal": 0,
           "type_info": {
             "char_set": 63,
@@ -26,7 +16,7 @@
           }
         },
         {
-          "name": "adana",
+          "name": "username",
           "ordinal": 1,
           "type_info": {
             "char_set": 224,
@@ -38,7 +28,7 @@
           }
         },
         {
-          "name": "mail_address",
+          "name": "email",
           "ordinal": 2,
           "type_info": {
             "char_set": 224,
@@ -50,7 +40,7 @@
           }
         },
         {
-          "name": "password",
+          "name": "password_hash",
           "ordinal": 3,
           "type_info": {
             "char_set": 224,
@@ -79,7 +69,7 @@
           "type_info": {
             "char_set": 63,
             "flags": {
-              "bits": 4225
+              "bits": 1153
             },
             "max_size": 19,
             "type": "Timestamp"
@@ -98,6 +88,16 @@
         "Right": 1
       }
     },
-    "query": "\n            SELECT kaiin_id, adana, mail_address, password, created_at, updated_at FROM kaiin WHERE adana = ?;\n            "
+    "query": "\n            SELECT * FROM users WHERE username = ?;\n            "
+  },
+  "a98302f66ed86f31d1067de908b4c45d9289d98d910987a511f05dadfdbee494": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 5
+      }
+    },
+    "query": "\n            INSERT INTO users (username, email, password_hash, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?);\n            "
   }
 }

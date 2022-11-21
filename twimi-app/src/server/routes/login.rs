@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use twimi_core::usecases::login::{Login, LoginInput, LoginOutput, LoginUseCaseError};
 
 use super::Inject;
-use crate::server::models;
+use crate::server::models::User;
 
 pub async fn login(
     usecase: Inject<dyn Login>,
@@ -13,21 +13,7 @@ pub async fn login(
     Ok(usecase
         .login(json.into_inner().into())
         .await
-        .map(|v| HttpResponse::Ok().json(LoginResponse::from(&v)))?)
-}
-
-#[derive(Debug, thiserror::Error)]
-#[error(transparent)]
-pub struct LoginError(#[from] LoginUseCaseError);
-
-impl ResponseError for LoginError {
-    fn status_code(&self) -> StatusCode {
-        match self.0 {
-            LoginUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            LoginUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
-            LoginUseCaseError::VerificationError(_) => StatusCode::UNAUTHORIZED,
-        }
-    }
+        .map(|output| HttpResponse::Ok().json(LoginResponse::from(&output)))?)
 }
 
 #[derive(Debug, Deserialize)]
@@ -47,15 +33,29 @@ impl From<LoginRequest> for LoginInput {
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse<'a> {
-    user: models::User<'a>,
+    user: User<'a>,
     access_token: &'a str,
 }
 
 impl<'a> From<&'a LoginOutput> for LoginResponse<'a> {
-    fn from(output: &'a LoginOutput) -> Self {
+    fn from(value: &'a LoginOutput) -> Self {
         Self {
-            user: models::User::from(&output.user),
-            access_token: &output.access_token,
+            user: (&value.user).into(),
+            access_token: &value.access_token,
+        }
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct LoginError(#[from] LoginUseCaseError);
+
+impl ResponseError for LoginError {
+    fn status_code(&self) -> StatusCode {
+        match self.0 {
+            LoginUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            LoginUseCaseError::ValidationError(_) => StatusCode::BAD_REQUEST,
+            LoginUseCaseError::VerificationError(_) => StatusCode::UNAUTHORIZED,
         }
     }
 }
