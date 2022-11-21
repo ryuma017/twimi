@@ -1,13 +1,13 @@
-mod email;
-mod password;
-mod username;
-
-pub use email::Email;
-pub use password::{Hashed, Password, Plain, PwKind};
-pub use username::Username;
+pub mod email;
+pub mod password;
+pub mod username;
 
 use time::OffsetDateTime;
 use unicode_segmentation::UnicodeSegmentation;
+
+use email::Email;
+use password::{Hashed, Password, Plain, PwKind};
+use username::Username;
 
 use super::{Id, ValidationError};
 

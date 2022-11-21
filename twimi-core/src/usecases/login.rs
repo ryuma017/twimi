@@ -1,13 +1,16 @@
 use std::sync::Arc;
 
-use anyhow::Context;
+use anyhow::Context as _;
 use async_trait::async_trait;
 use shaku::{Component, Interface};
 
 use crate::domain::{
-    models::{user::User, ValidationError},
+    models::{User, ValidationError},
     repositories::users::UsersRepository,
-    services::{JwtService, PasswordService, VerificationError},
+    services::{
+        jwt::JwtService,
+        password::{PasswordService, VerificationError},
+    },
 };
 
 #[async_trait]

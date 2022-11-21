@@ -4,7 +4,7 @@ use serde::Deserialize;
 use twimi_core::usecases::signup::{SignUp, SignUpInput, SignUpOutput, SignUpUseCaseError};
 
 use super::Inject;
-use crate::server::models;
+use crate::server::models::User;
 
 pub async fn signup(
     usecase: Inject<dyn SignUp>,
@@ -47,10 +47,10 @@ impl From<SignUpRequest> for SignUpInput {
     }
 }
 
-type SignUpResponse<'a> = models::User<'a>;
+type SignUpResponse<'a> = User<'a>;
 
 impl<'a> From<&'a SignUpOutput> for SignUpResponse<'a> {
     fn from(value: &'a SignUpOutput) -> Self {
-        models::User::from(&value.user)
+        User::from(&value.user)
     }
 }

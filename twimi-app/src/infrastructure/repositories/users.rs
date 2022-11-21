@@ -5,11 +5,11 @@ use async_trait::async_trait;
 use shaku::Component;
 
 use twimi_core::domain::{
-    models::user::{Hashed, NewUser, User, Username},
+    models::{password::Hashed, NewUser, User, Username},
     repositories::users::{InsertionError, UsersRepository},
 };
 
-use crate::{infrastructure::models::users::UserRecord, infrastructure::services::Database};
+use crate::infrastructure::{models::UsersTable, Database};
 
 #[derive(Component)]
 #[shaku(interface = UsersRepository)]
@@ -21,7 +21,7 @@ pub struct UsersRepositoryImpl {
 #[async_trait]
 impl UsersRepository for UsersRepositoryImpl {
     async fn insert_user(&self, new_user: NewUser<Hashed>) -> Result<User, InsertionError> {
-        let mut user_record: UserRecord = new_user.into();
+        let mut user_record: UsersTable = new_user.into();
         let user_id = sqlx::query!(
             r#"
             INSERT INTO users (username, email, password_hash, created_at, updated_at)
@@ -36,9 +36,9 @@ impl UsersRepository for UsersRepositoryImpl {
         .execute(self.database.pool())
         .await
         .context("username or email is already taken.")?
-        .last_insert_id();
+        .last_insert_id() as i64;
 
-        user_record.set_id(user_id as i64);
+        user_record.set_id(user_id);
 
         Ok(user_record.into())
     }
@@ -48,14 +48,14 @@ impl UsersRepository for UsersRepositoryImpl {
         username: Username,
     ) -> Result<Option<User>, anyhow::Error> {
         Ok(sqlx::query_as!(
-            UserRecord,
+            UsersTable,
             r#"
             SELECT * FROM users WHERE username = ?;
             "#,
             username.as_ref()
         )
         .fetch_optional(self.database.pool())
-        .await? // Option<UserRecord, None>
-        .map(|user_record: UserRecord| user_record.into()))
+        .await? // Option<UsersTable, None>
+        .map(|user_record: UsersTable| user_record.into()))
     }
 }

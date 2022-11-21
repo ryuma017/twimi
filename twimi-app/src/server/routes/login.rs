@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use twimi_core::usecases::login::{Login, LoginInput, LoginOutput, LoginUseCaseError};
 
 use super::Inject;
-use crate::server::models;
+use crate::server::models::User;
 
 pub async fn login(
     usecase: Inject<dyn Login>,
@@ -47,14 +47,14 @@ impl From<LoginRequest> for LoginInput {
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse<'a> {
-    user: models::User<'a>,
+    user: User<'a>,
     access_token: &'a str,
 }
 
 impl<'a> From<&'a LoginOutput> for LoginResponse<'a> {
     fn from(output: &'a LoginOutput) -> Self {
         Self {
-            user: models::User::from(&output.user),
+            user: User::from(&output.user),
             access_token: &output.access_token,
         }
     }

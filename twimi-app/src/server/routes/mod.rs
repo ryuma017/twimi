@@ -8,4 +8,4 @@ pub use login::login;
 pub use signup::signup;
 pub use user::get_authenticated_user;
 
-pub type Inject<T> = shaku_actix::Inject<crate::AppModule, T>;
+pub(self) type Inject<T> = shaku_actix::Inject<crate::AppModule, T>;

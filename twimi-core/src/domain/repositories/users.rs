@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use shaku::Interface;
 
-use crate::domain::models::user::{Hashed, NewUser, User, Username};
+use crate::domain::models::{password::Hashed, NewUser, User, Username};
 
 #[derive(Debug, thiserror::Error)]
 #[error("Failed to insert a new user: {0}")]

@@ -4,7 +4,8 @@ use argon2::{
     PasswordVerifier as _, Version,
 };
 use shaku::Component;
-use twimi_core::domain::services::{
+
+use twimi_core::domain::services::password::{
     ComputeHashError, PasswordHasher, PasswordService, PasswordVerifier, VerificationError,
 };
 

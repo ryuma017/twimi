@@ -5,7 +5,7 @@ use shaku::Component;
 
 use twimi_core::domain::repositories::health_check::HealthCheckRepository;
 
-use crate::infrastructure::services::Database;
+use crate::infrastructure::Database;
 
 #[derive(Component)]
 #[shaku(interface = HealthCheckRepository)]

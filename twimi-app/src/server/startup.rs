@@ -1,17 +1,20 @@
 use std::sync::Arc;
 
 use actix_settings::{ApplySettings as _, Settings};
-use actix_web::dev::Server;
-use actix_web::middleware::NormalizePath;
-use actix_web::{web, App, HttpServer};
+use actix_web::{dev::Server, middleware::NormalizePath, web, App, HttpServer};
 use actix_web_lab::middleware::from_fn;
 
-use super::middleware::reject_unauthenticated_user;
-use super::routes::{get_authenticated_user, health_check, login, signup};
-use crate::infrastructure::services::{
-    Database, JwtServiceImpl, JwtServiceImplParameters, MySqlDatabase,
+use super::{
+    middleware::reject_unauthenticated_user,
+    routes::{get_authenticated_user, health_check, login, signup},
 };
-use crate::AppModule;
+use crate::{
+    infrastructure::{
+        services::jwt::{JwtServiceImpl, JwtServiceImplParameters},
+        Database, MySqlDatabase,
+    },
+    AppModule,
+};
 
 pub struct ApiServer {
     port: u16,

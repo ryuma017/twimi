@@ -5,11 +5,11 @@ use shaku::{Component, Interface};
 
 use crate::domain::{
     models::{
-        user::{NewUser, Plain, User},
         ValidationError,
+        {password::Plain, NewUser, User},
     },
     repositories::users::{InsertionError, UsersRepository},
-    services::{ComputeHashError, PasswordService},
+    services::password::{ComputeHashError, PasswordService},
 };
 
 #[async_trait]

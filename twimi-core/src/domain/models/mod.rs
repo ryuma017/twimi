@@ -1,6 +1,11 @@
-pub mod user;
+mod user;
 
-pub use user::User;
+pub use user::{
+    email::Email,
+    password::{self, Password},
+    username::Username,
+    NewUser, User,
+};
 
 use std::marker::PhantomData;
 

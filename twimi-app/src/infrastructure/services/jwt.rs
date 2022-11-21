@@ -2,7 +2,7 @@ use anyhow::Context as _;
 use jsonwebtoken::{DecodingKey, EncodingKey, Validation};
 use shaku::Component;
 
-use twimi_core::domain::services::{Claims, JwtDecoder, JwtEncoder, JwtService};
+use twimi_core::domain::services::jwt::{Claims, JwtDecoder, JwtEncoder, JwtService};
 
 #[derive(Component)]
 #[shaku(interface = JwtService)]
