@@ -38,6 +38,7 @@ impl NewUser<Plain> {
 }
 
 pub struct UpdatedUser {
+    pub id: Id<User>,
     pub username: Option<Username>,
     pub email: Option<Email>,
 }

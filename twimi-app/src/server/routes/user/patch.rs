@@ -1,17 +1,54 @@
-use actix_web::{http::StatusCode, web::ReqData, HttpResponse, ResponseError};
+use actix_web::{
+    http::StatusCode,
+    web::{Json, ReqData},
+    HttpResponse, ResponseError,
+};
+use serde::{Deserialize, Serialize};
 
-use crate::server::models::UserId;
+use twimi_core::usecases::user::patch::{
+    UpdateAuthnUser, UpdateAuthnUserInput, UpdateAuthnUserOutput, UpdateAuthnUserUseCaseError,
+};
+
+use super::super::Inject;
+use crate::server::models::{User, UserId};
 
 pub async fn update_authenticated_user(
+    usecase: Inject<dyn UpdateAuthnUser>,
     user_id: ReqData<UserId>,
+    Json(body): Json<UpdateAuthnUserRequest>,
 ) -> Result<HttpResponse, UpdateAuthnUserError> {
-    let user_id: String = user_id.into_inner().into();
-    Ok(HttpResponse::Ok().body(format!("update the authenticated user: {user_id}")))
+    Ok(usecase
+        .update_authenticated_user(UpdateAuthnUserInput::new(
+            user_id.into_inner().into(),
+            body.username,
+            body.email,
+        ))
+        .await
+        .map(|output| HttpResponse::Ok().json(UpdateAuthnUserResponse::from(&output)))?)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateAuthnUserRequest {
+    pub username: Option<String>,
+    pub email: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct UpdateAuthnUserResponse<'a> {
+    user: User<'a>,
+}
+
+impl<'a> From<&'a UpdateAuthnUserOutput> for UpdateAuthnUserResponse<'a> {
+    fn from(value: &'a UpdateAuthnUserOutput) -> Self {
+        Self {
+            user: (&value.user).into(),
+        }
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
 #[error(transparent)]
-pub struct UpdateAuthnUserError(#[from] anyhow::Error);
+pub struct UpdateAuthnUserError(#[from] UpdateAuthnUserUseCaseError);
 
 impl ResponseError for UpdateAuthnUserError {
     fn status_code(&self) -> StatusCode {

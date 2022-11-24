@@ -39,14 +39,6 @@ impl GetAuthnUser for GetAuthnUserUseCase {
     }
 }
 
-#[derive(thiserror::Error, Debug)]
-pub enum GetAuthnUserUseCaseError {
-    #[error(transparent)]
-    UnexpectedError(#[from] anyhow::Error),
-    #[error(transparent)]
-    ValidationError(#[from] ValidationError),
-}
-
 pub struct GetAuthnUserInput {
     pub user_id: String,
 }
@@ -59,4 +51,12 @@ impl From<User> for GetAuthnUserOutput {
     fn from(value: User) -> Self {
         GetAuthnUserOutput { user: value }
     }
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum GetAuthnUserUseCaseError {
+    #[error(transparent)]
+    UnexpectedError(#[from] anyhow::Error),
+    #[error(transparent)]
+    ValidationError(#[from] ValidationError),
 }
