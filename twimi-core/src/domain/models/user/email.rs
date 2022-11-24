@@ -1,6 +1,6 @@
 use validator::validate_email;
 
-use super::{ensure_validated, ValidationError};
+use super::super::{ensure_validated, ValidationError};
 
 #[derive(Debug)]
 pub struct Email(String);

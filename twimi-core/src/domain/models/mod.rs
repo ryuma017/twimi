@@ -4,7 +4,7 @@ pub use user::{
     email::Email,
     password::{self, Password},
     username::Username,
-    NewUser, User,
+    NewUser, UpdatedUser, User,
 };
 
 use std::marker::PhantomData;
@@ -39,5 +39,22 @@ impl<T> Default for Id<T> {
             value: Default::default(),
             _marker: PhantomData,
         }
+    }
+}
+
+fn validate_length(s: &str, min: usize, max: usize) -> bool {
+    use unicode_segmentation::UnicodeSegmentation;
+
+    let trimmed = s.trim();
+    (min..=max).contains(&trimmed.graphemes(true).count())
+}
+
+fn ensure_validated<V, F>(value: V, f: F, msg: &str) -> Result<(), ValidationError>
+where
+    F: FnOnce(V) -> bool,
+{
+    match f(value) {
+        true => Ok(()),
+        false => Err(ValidationError(msg.into())),
     }
 }

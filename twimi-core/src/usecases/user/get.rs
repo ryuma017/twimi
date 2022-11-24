@@ -32,7 +32,7 @@ impl GetAuthnUser for GetAuthnUserUseCase {
     ) -> Result<GetAuthnUserOutput, GetAuthnUserUseCaseError> {
         Ok(self
             .repository
-            .find_user_by_username(input.username.try_into()?)
+            .find_user_by_id(input.user_id.into())
             .await?
             .context("User not found.")?
             .into())
@@ -48,7 +48,7 @@ pub enum GetAuthnUserUseCaseError {
 }
 
 pub struct GetAuthnUserInput {
-    pub username: String,
+    pub user_id: String,
 }
 
 pub struct GetAuthnUserOutput {

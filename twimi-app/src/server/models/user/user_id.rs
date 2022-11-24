@@ -1,22 +1,22 @@
 use std::ops::Deref;
 
 #[derive(Debug, Clone)]
-pub struct Username(String);
+pub struct UserId(String);
 
-impl From<Username> for String {
-    fn from(value: Username) -> Self {
+impl From<UserId> for String {
+    fn from(value: UserId) -> String {
         value.0
     }
 }
 
-impl From<String> for Username {
+impl From<String> for UserId {
     fn from(value: String) -> Self {
         Self(value)
     }
 }
 
-impl Deref for Username {
-    type Target = str;
+impl Deref for UserId {
+    type Target = String;
 
     fn deref(&self) -> &Self::Target {
         &self.0

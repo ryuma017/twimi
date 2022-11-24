@@ -1,4 +1,4 @@
-pub mod username;
+pub mod user_id;
 
 use serde::Serialize;
 use time::OffsetDateTime;

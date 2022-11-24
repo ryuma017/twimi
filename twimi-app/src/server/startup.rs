@@ -6,7 +6,7 @@ use actix_web_lab::middleware::from_fn;
 
 use super::{
     middleware::reject_unauthenticated_user,
-    routes::{get_authenticated_user, health_check, login, signup},
+    routes::{get_authenticated_user, health_check, login, signup, update_authenticated_user},
 };
 use crate::{
     infrastructure::{
@@ -38,7 +38,8 @@ impl ApiServer {
                 .service(
                     web::resource("/user")
                         .wrap(from_fn(reject_unauthenticated_user))
-                        .route(web::get().to(get_authenticated_user)),
+                        .route(web::get().to(get_authenticated_user))
+                        .route(web::patch().to(update_authenticated_user)),
                 )
                 .app_data(Arc::clone(&module))
         })

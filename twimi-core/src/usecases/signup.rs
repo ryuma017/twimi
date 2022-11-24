@@ -8,7 +8,7 @@ use crate::domain::{
         ValidationError,
         {password::Plain, NewUser, User},
     },
-    repositories::users::{InsertionError, UsersRepository},
+    repositories::users::UsersRepository,
     services::password::{ComputeHashError, PasswordService},
 };
 
@@ -45,7 +45,7 @@ impl SignUp for SignUpUseCase {
 #[derive(thiserror::Error, Debug)]
 pub enum SignUpUseCaseError {
     #[error(transparent)]
-    DatabaseError(#[from] InsertionError),
+    DatabaseError(#[from] anyhow::Error),
     #[error(transparent)]
     ValidationError(#[from] ValidationError),
     #[error(transparent)]
