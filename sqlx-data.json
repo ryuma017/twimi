@@ -90,6 +90,96 @@
     },
     "query": "\n            SELECT * FROM users WHERE username = ?;\n            "
   },
+  "34fd4a172cc95f05a6ddfeec83834f1bed6f2ea0dedf396e60f1d0b26dd752a8": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id",
+          "ordinal": 0,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 515
+            },
+            "max_size": 20,
+            "type": "LongLong"
+          }
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4101
+            },
+            "max_size": 1020,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4101
+            },
+            "max_size": 1024,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "password_hash",
+          "ordinal": 3,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4097
+            },
+            "max_size": 1020,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 1153
+            },
+            "max_size": 19,
+            "type": "Timestamp"
+          }
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 5,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 1153
+            },
+            "max_size": 19,
+            "type": "Timestamp"
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n            SELECT * FROM users WHERE user_id = ?;\n            "
+  },
   "a98302f66ed86f31d1067de908b4c45d9289d98d910987a511f05dadfdbee494": {
     "describe": {
       "columns": [],
@@ -99,5 +189,35 @@
       }
     },
     "query": "\n            INSERT INTO users (username, email, password_hash, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?);\n            "
+  },
+  "b8cb7336318282e3998026ab555746dad003e50027a12175f5cc5813612781e0": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n                    UPDATE users\n                    SET email = ?, updated_at = ?\n                    WHERE user_id = ?;\n                    "
+  },
+  "dd02fdbbeb07e3fc52edfefb8207c02186edc0551f2dcad46dc5fb3f396c952b": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n                    UPDATE users\n                    SET username = ?, updated_at = ?\n                    WHERE user_id = ?;\n                    "
+  },
+  "ed39d23cc9db779c29ffe12151e051f7b972f1c940c889310e1db2816d6e42a8": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 4
+      }
+    },
+    "query": "\n                    UPDATE users\n                    SET username = ?, email = ?, updated_at = ?\n                    WHERE user_id = ?;\n                    "
   }
 }

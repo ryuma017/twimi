@@ -10,8 +10,10 @@ use infrastructure::{
 };
 
 use twimi_core::usecases::{
-    health_check::HealthCheckUseCase, login::LoginUseCase, signup::SignUpUseCase,
-    user::get::GetAuthnUserUseCase,
+    health_check::HealthCheckUseCase,
+    login::LoginUseCase,
+    signup::SignUpUseCase,
+    user::{get::GetAuthnUserUseCase, patch::UpdateAuthnUserUseCase},
 };
 
 module! {
@@ -26,6 +28,7 @@ module! {
             SignUpUseCase,
             LoginUseCase,
             GetAuthnUserUseCase,
+            UpdateAuthnUserUseCase,
         ],
         providers = []
     }

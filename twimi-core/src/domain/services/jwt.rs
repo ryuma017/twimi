@@ -6,6 +6,7 @@ use crate::domain::models::User;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Claims {
+    pub sub: String,
     pub exp: i64,
     pub name: String,
 }
@@ -13,17 +14,9 @@ pub struct Claims {
 impl From<&User> for Claims {
     fn from(user: &User) -> Self {
         Self {
-            name: user.username.to_string(),
-            ..Default::default()
-        }
-    }
-}
-
-impl Default for Claims {
-    fn default() -> Self {
-        Self {
+            sub: user.id.value().to_string(),
             exp: (OffsetDateTime::now_utc() + time::Duration::hours(8)).unix_timestamp(),
-            name: String::new(),
+            name: user.username.to_string(),
         }
     }
 }
@@ -33,7 +26,7 @@ pub trait JwtEncoder: Interface {
 }
 
 pub trait JwtDecoder: Interface {
-    fn decode(&self, token: &str) -> Result<String, anyhow::Error>;
+    fn decode(&self, token: &str) -> Result<Claims, anyhow::Error>;
 }
 
 pub trait JwtService: JwtEncoder + JwtDecoder {}

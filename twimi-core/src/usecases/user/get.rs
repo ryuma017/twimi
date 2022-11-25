@@ -32,23 +32,15 @@ impl GetAuthnUser for GetAuthnUserUseCase {
     ) -> Result<GetAuthnUserOutput, GetAuthnUserUseCaseError> {
         Ok(self
             .repository
-            .find_user_by_username(input.username.try_into()?)
+            .find_user_by_id(input.user_id.into())
             .await?
             .context("User not found.")?
             .into())
     }
 }
 
-#[derive(thiserror::Error, Debug)]
-pub enum GetAuthnUserUseCaseError {
-    #[error(transparent)]
-    UnexpectedError(#[from] anyhow::Error),
-    #[error(transparent)]
-    ValidationError(#[from] ValidationError),
-}
-
 pub struct GetAuthnUserInput {
-    pub username: String,
+    pub user_id: String,
 }
 
 pub struct GetAuthnUserOutput {
@@ -59,4 +51,12 @@ impl From<User> for GetAuthnUserOutput {
     fn from(value: User) -> Self {
         GetAuthnUserOutput { user: value }
     }
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum GetAuthnUserUseCaseError {
+    #[error(transparent)]
+    UnexpectedError(#[from] anyhow::Error),
+    #[error(transparent)]
+    ValidationError(#[from] ValidationError),
 }

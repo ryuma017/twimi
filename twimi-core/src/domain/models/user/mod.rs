@@ -2,14 +2,15 @@ pub mod email;
 pub mod password;
 pub mod username;
 
+use std::marker::PhantomData;
+
 use time::OffsetDateTime;
-use unicode_segmentation::UnicodeSegmentation;
 
 use email::Email;
 use password::{Hashed, Password, Plain, PwKind};
 use username::Username;
 
-use super::{Id, ValidationError};
+use super::Id;
 
 pub struct User {
     pub id: Id<Self>,
@@ -36,17 +37,17 @@ impl NewUser<Plain> {
     }
 }
 
-fn validate_length(s: &str, min: usize, max: usize) -> bool {
-    let trimmed = s.trim();
-    (min..=max).contains(&trimmed.graphemes(true).count())
+pub struct UpdatedUser {
+    pub id: Id<User>,
+    pub username: Option<Username>,
+    pub email: Option<Email>,
 }
 
-fn ensure_validated<V, F>(value: V, f: F, msg: &str) -> Result<(), ValidationError>
-where
-    F: FnOnce(V) -> bool,
-{
-    match f(value) {
-        true => Ok(()),
-        false => Err(ValidationError(msg.into())),
+impl From<String> for Id<User> {
+    fn from(value: String) -> Self {
+        Self {
+            value: value.parse().unwrap(),
+            _marker: PhantomData,
+        }
     }
 }

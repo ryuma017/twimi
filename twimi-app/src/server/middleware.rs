@@ -14,7 +14,7 @@ use shaku::HasComponent;
 
 use twimi_core::domain::services::jwt::JwtService;
 
-use crate::{server::models, AppModule};
+use crate::{server::models::UserId, AppModule};
 
 #[derive(Debug, thiserror::Error)]
 enum AuthenticationError {
@@ -56,11 +56,11 @@ pub async fn reject_unauthenticated_user<B: MessageBody>(
             )
         })?;
     let jwt_service: &dyn JwtService = request.app_data::<Arc<AppModule>>().unwrap().resolve_ref();
-    let username: models::Username = jwt_service
+    let user_id: UserId = jwt_service
         .decode(jwt)
-        .map(|username| username.into())
+        .map(|claims| claims.sub.into())
         .map_err(|e| Unauthorized(e, "Invalid token."))?;
-    request.extensions_mut().insert(username);
+    request.extensions_mut().insert(user_id);
     next.call(request).await
 }
 

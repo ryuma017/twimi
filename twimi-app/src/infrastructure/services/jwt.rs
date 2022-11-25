@@ -22,13 +22,13 @@ impl JwtEncoder for JwtServiceImpl {
 }
 
 impl JwtDecoder for JwtServiceImpl {
-    fn decode(&self, token: &str) -> Result<String, anyhow::Error> {
+    fn decode(&self, token: &str) -> Result<Claims, anyhow::Error> {
         jsonwebtoken::decode::<Claims>(
             token,
             &DecodingKey::from_secret(self.secret.as_slice()),
             &Validation::default(),
         )
         .context("Failed to decode JWT.")
-        .map(|data| data.claims.name)
+        .map(|data| data.claims)
     }
 }

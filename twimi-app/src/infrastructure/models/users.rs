@@ -1,7 +1,7 @@
 use sqlx::FromRow;
 use time::OffsetDateTime;
 
-use twimi_core::domain::models::{password::Hashed, NewUser, User};
+use twimi_core::domain::models::User;
 
 #[allow(unused)]
 #[derive(FromRow)]
@@ -12,12 +12,6 @@ pub struct UsersTable {
     pub password_hash: String,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
-}
-
-impl UsersTable {
-    pub fn set_id(&mut self, id: i64) {
-        self.user_id = id;
-    }
 }
 
 impl From<UsersTable> for User {
@@ -32,20 +26,6 @@ impl From<UsersTable> for User {
             password_hash: value.password_hash.into(),
             created_at: value.created_at,
             updated_at: value.updated_at,
-        }
-    }
-}
-
-impl From<NewUser<Hashed>> for UsersTable {
-    fn from(value: NewUser<Hashed>) -> Self {
-        let timestamp = OffsetDateTime::now_utc();
-        Self {
-            user_id: Default::default(),
-            username: value.username.into(),
-            email: value.email.into(),
-            password_hash: value.password.into(),
-            created_at: timestamp,
-            updated_at: timestamp,
         }
     }
 }

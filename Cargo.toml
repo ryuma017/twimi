@@ -15,5 +15,4 @@ async-trait = "0.1.58"
 serde = { version = "1.0.147", features = ["derive"] }
 shaku = "0.6.1"
 thiserror = "1.0.37"
-time = { version = "0.3.17", features = ["serde", "formatting", "parsing"] }
-
+time = { version = "0.3.17", features = ["serde-human-readable"] }

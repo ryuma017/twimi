@@ -5,22 +5,22 @@ use twimi_core::usecases::user::get::{
 };
 
 use super::super::Inject;
-use crate::server::models::{User, Username};
+use crate::server::models::{User, UserId};
 
 pub async fn get_authenticated_user(
     usecase: Inject<dyn GetAuthnUser>,
-    username: ReqData<Username>,
+    user_id: ReqData<UserId>,
 ) -> Result<HttpResponse, GetAuthnUserError> {
     Ok(usecase
-        .get_authenticated_user(username.into_inner().into())
+        .get_authenticated_user(user_id.into_inner().into())
         .await
         .map(|output| HttpResponse::Ok().json(GetAuthnUserResponse::from(&output)))?)
 }
 
-impl From<Username> for GetAuthnUserInput {
-    fn from(value: Username) -> Self {
+impl From<UserId> for GetAuthnUserInput {
+    fn from(value: UserId) -> Self {
         Self {
-            username: value.into(),
+            user_id: value.into(),
         }
     }
 }
@@ -44,9 +44,6 @@ pub struct GetAuthnUserError(#[from] GetAuthnUserUseCaseError);
 
 impl ResponseError for GetAuthnUserError {
     fn status_code(&self) -> StatusCode {
-        match self.0 {
-            GetAuthnUserUseCaseError::UnexpectedError(_)
-            | GetAuthnUserUseCaseError::ValidationError(_) => StatusCode::FORBIDDEN,
-        }
+        StatusCode::FORBIDDEN // FIXME
     }
 }

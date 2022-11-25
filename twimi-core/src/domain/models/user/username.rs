@@ -1,4 +1,4 @@
-use super::{ensure_validated, validate_length, ValidationError};
+use super::super::{ensure_validated, validate_length, ValidationError};
 
 #[derive(Debug)]
 pub struct Username(String);
