@@ -52,6 +52,9 @@ pub struct UpdateAuthnUserError(#[from] UpdateAuthnUserUseCaseError);
 
 impl ResponseError for UpdateAuthnUserError {
     fn status_code(&self) -> StatusCode {
-        StatusCode::FORBIDDEN // FIXME
+        match self.0 {
+            UpdateAuthnUserUseCaseError::ValidationError(_) => StatusCode::UNPROCESSABLE_ENTITY,
+            UpdateAuthnUserUseCaseError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 }
